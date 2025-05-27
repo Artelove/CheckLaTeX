@@ -1,6 +1,9 @@
-﻿using System.Net.Security;
+using System.Net.Security;
 using System.Text.RegularExpressions;
 using TexLint.Models;
+using System.Linq; 
+using System.Collections.Generic; 
+using System; 
 
 namespace TexLint.TestFunctionClasses;
 
@@ -11,10 +14,10 @@ public class TestEnvironmentWithItemsCommand : TestFunction
     private const string PATTERN_LOWER_CASE = @"^[\da-zа-яё]+$";
     private const string PATTERN_END_OF_STRING = @"^[\s]+$";
     private const string END_SENTENCE_CHARS = ".?!";
-    private readonly Regex _regexEndSentence = new(PATTERN_END_SENTENCE);
-    private readonly Regex _regexUpperCase = new(PATTERN_UPPER_CASE);
-    private readonly Regex _regexLowerCase = new(PATTERN_LOWER_CASE);
-    private readonly Regex _regexSpace = new(PATTERN_END_OF_STRING);
+    private readonly Regex _regexEndSentence = new Regex(PATTERN_END_SENTENCE); 
+    private readonly Regex _regexUpperCase = new Regex(PATTERN_UPPER_CASE); 
+    private readonly Regex _regexLowerCase = new Regex(PATTERN_LOWER_CASE); 
+    private readonly Regex _regexSpace = new Regex(PATTERN_END_OF_STRING); 
     
     private PunctuationCaseWritingType _writingType = PunctuationCaseWritingType.СolonLowercaseSemicolon;
     
@@ -26,350 +29,211 @@ public class TestEnvironmentWithItemsCommand : TestFunction
 
     public TestEnvironmentWithItemsCommand()
     {
-        var itemCommandEnvironment =
-            TestUtilities.GetAllEnvironment().Where(command =>
-                command.EnvironmentName == "enumerate" ||
-                command.EnvironmentName == "itemize" ||
-                command.EnvironmentName == "description" ||
-                command.EnvironmentName == "list");
+        if (TestUtilities.FoundsCommands == null || !TestUtilities.FoundsCommands.Any()) return;
+
+        var itemCommandEnvironments =
+            TestUtilities.GetAllEnvironment().Where(envCmd => // Changed variable name for clarity
+                envCmd != null && (
+                envCmd.EnvironmentName == "enumerate" ||
+                envCmd.EnvironmentName == "itemize" ||
+                envCmd.EnvironmentName == "description" ||
+                envCmd.EnvironmentName == "list")
+                ).ToList();
        
-        foreach (var environmentCommand in itemCommandEnvironment)
+        foreach (var environmentCommand in itemCommandEnvironments)
         {
-            var textBeforeEnvironment = TestUtilities.GetCommandByIndexInCollection(
-                    environmentCommand.GlobalIndex - 1, 
-                    TestUtilities.FoundsCommands.
-                        Where(command => command.FileOwner==environmentCommand.FileOwner)
-                    );
+            if (environmentCommand == null || string.IsNullOrEmpty(environmentCommand.FileOwner)) continue;
+
+            var commandsInFile = TestUtilities.FoundsCommands
+                                     .Where(command => command != null && command.FileOwner == environmentCommand.FileOwner)
+                                     .OrderBy(c => c.GlobalIndex) 
+                                     .ToList();
             
-            if (textBeforeEnvironment is TextCommand textCommand)
+            Command? textBeforeEnvironment = null; 
+            if (environmentCommand.GlobalIndex > 0) {
+                textBeforeEnvironment = commandsInFile.LastOrDefault(c => c != null && c.GlobalIndex < environmentCommand.GlobalIndex);
+            }
+            
+            if (textBeforeEnvironment is TextCommand textCmd && textCmd.Text != null) 
             {
-                if (_regexSpace.Match(textCommand.Text).Success)
+                if (string.IsNullOrWhiteSpace(textCmd.Text)) 
                 {
                     Errors.Add(new TestError()
                     {
                         ErrorType = ErrorType.Warning,
                         ErrorCommand = textBeforeEnvironment,
-                        ErrorInfo =
-                            $"Отсутствует пунктуационный переход перед окружением \"список\" или \"перечисление\""
+                        ErrorInfo = $"Отсутствует пунктуационный переход перед окружением \"{environmentCommand.EnvironmentName}\""
                     });
-                    
                     continue;
                 }
 
-                var chBeforeEnvironment = '\0';
+                char chBeforeEnvironment = '\0';
+                string relevantText = textCmd.Text.TrimEnd(); 
                 
-                for (int i = textCommand.Text.Length - 1; i >= 0; i--)
-                {
-                    if (_regexSpace.Match(textCommand.Text[i].ToString()).Success == false)
+                if (relevantText.Length > 0) {
+                    chBeforeEnvironment = relevantText[relevantText.Length -1];
+
+                    if (END_SENTENCE_CHARS.Contains(chBeforeEnvironment))
                     {
-                        chBeforeEnvironment = textCommand.Text[i];
+                        _writingType = PunctuationCaseWritingType.DotUppercaseDot;
+                    }
+                    else if (chBeforeEnvironment == ':')
+                    {
+                        _writingType = PunctuationCaseWritingType.СolonLowercaseSemicolon;
                     }
                     else
                     {
-                        continue;
+                        Errors.Add(new TestError()
+                        {
+                            ErrorType = ErrorType.Error,
+                            ErrorCommand = textBeforeEnvironment,
+                            ErrorInfo = $"Ожидался символ перехода на окружение  \"{environmentCommand.EnvironmentName}\": [{END_SENTENCE_CHARS}:], однако найден символ '{chBeforeEnvironment}'."
+                        });
                     }
-                    
-                    if (END_SENTENCE_CHARS.Contains(chBeforeEnvironment.ToString()))
-                    {
-                        _writingType = PunctuationCaseWritingType.DotUppercaseDot;
-                        break;
-                    }
-                    
-                    if (chBeforeEnvironment == ':')
-                    {
-                        _writingType = PunctuationCaseWritingType.СolonLowercaseSemicolon;
-                        break;
-                    }
-                    
-                    Errors.Add(new TestError()
-                    {
-                        ErrorType = ErrorType.Error,
+                } else { 
+                     Errors.Add(new TestError() { 
+                        ErrorType = ErrorType.Warning,
                         ErrorCommand = textBeforeEnvironment,
-                        ErrorInfo =
-                            $"Ожидался символ перехода на окружение  \"список\" или \"перечисление\": [{END_SENTENCE_CHARS + ":"}]," +
-                            $" однако найден символ {textCommand.Text[i]}."
-                    });
-                    
-                    break;
+                        ErrorInfo = $"Текст перед окружением \"{environmentCommand.EnvironmentName}\" состоит только из пробельных символов или пуст."
+                     });
+                     continue;
                 }
 
-                if (chBeforeEnvironment == '\0')
-                    continue;
-
-                var items = TestUtilities.GetAllCommandsByNameFromList("item", environmentCommand.InnerCommands);
+                var items = TestUtilities.GetAllCommandsByNameFromList("item", environmentCommand.InnerCommands ?? new List<Command>());
+                if (!items.Any()) continue; 
                 
-                for (int i = 1; i < items.Count; i++)
+                for (int i = 0; i < items.Count; i++) 
                 {
-                    CheckTextWritingType(
-                        TestUtilities.GetCommandByIndexInCollection(
-                            items[i-1].GlobalIndex + 1, 
-                            environmentCommand.InnerCommands),
-                        TestUtilities.GetCommandByIndexInCollection(
-                            items[i].GlobalIndex - 1, 
-                            environmentCommand.InnerCommands), 
-                        _writingType);
-                }
+                    Command currentItem = items[i];
+                    if (currentItem == null) continue;
 
-                CheckLastItemWritingType(
-                    TestUtilities.GetCommandByIndexInCollection(
-                        items[^1].GlobalIndex + 1,
-                        environmentCommand.InnerCommands),
-                    TestUtilities.GetCommandByIndexInCollection(
-                        environmentCommand.InnerCommands[^1].GlobalIndex - 1, 
-                        environmentCommand.InnerCommands),
-                    _writingType);
+                    Command? itemStartText = environmentCommand.InnerCommands?
+                                            .Where(cmd => cmd != null && cmd.GlobalIndex > currentItem.GlobalIndex)
+                                            .OrderBy(cmd => cmd.GlobalIndex)
+                                            .FirstOrDefault();
+
+                    Command? itemEndText; 
+                    if (i < items.Count - 1) 
+                    {
+                         Command nextItem = items[i+1];
+                         if (nextItem == null) continue; 
+                         itemEndText = environmentCommand.InnerCommands?
+                                       .Where(cmd => cmd != null && cmd.GlobalIndex < nextItem.GlobalIndex && cmd.GlobalIndex > currentItem.GlobalIndex)
+                                       .OrderByDescending(cmd => cmd.GlobalIndex) 
+                                       .FirstOrDefault();
+                    }
+                    else // Last item
+                    {
+                         itemEndText = environmentCommand.InnerCommands?
+                                      .Where(cmd => cmd != null && cmd.GlobalIndex > currentItem.GlobalIndex && (environmentCommand.EndCommand == null || cmd.GlobalIndex < environmentCommand.EndCommand.GlobalIndex) )
+                                      .OrderBy(cmd => cmd.GlobalIndex) 
+                                      .LastOrDefault();
+                    }
+                    CheckTextWritingType(itemStartText, itemEndText, _writingType, i == items.Count - 1, environmentCommand, currentItem);
+                }
+            }
+            else 
+            {
+                Errors.Add(new TestError()
+                {
+                    ErrorType = ErrorType.Warning,
+                    ErrorCommand = environmentCommand, 
+                    ErrorInfo = $"Отсутствует текст или текстовый переход перед окружением \"{environmentCommand.EnvironmentName}\""
+                });
+            }
+        }
+    }
+
+    // Changed environmentContext to be of type EnvironmentCommand to access EndCommand and InnerCommands directly
+    private void CheckTextWritingType(Command? startTextCmd, Command? endTextCmd, PunctuationCaseWritingType currentWritingType, bool isLastItem, EnvironmentCommand environmentCommand, Command currentItemContext)
+    {
+        if (startTextCmd is TextCommand startCmd && startCmd.Text != null) 
+        {
+            var effectiveStartText = startCmd.Text.TrimStart();
+            if (string.IsNullOrEmpty(effectiveStartText))
+            {
+                Errors.Add(new TestError() { ErrorCommand = currentItemContext, ErrorType = ErrorType.Warning, ErrorInfo = "Элемент списка начинается с пробельных символов или пуст." });
             }
             else
             {
-                Errors.Add(new TestError()
+                char firstChar = effectiveStartText[0];
+                if (!char.IsLetter(firstChar))
                 {
-                    ErrorType = ErrorType.Warning,
-                    ErrorCommand = textBeforeEnvironment,
-                    ErrorInfo = $"Отсутствует текст перед окружением \"список\" или \"перечисление\""
-                });
-            }
-        }
-    }
-
-    private void CheckLastItemWritingType(Command startText, Command endText, PunctuationCaseWritingType punctuationCaseWritingType)
-    {
-        if (startText is TextCommand startCommand)
-        {
-            if (_regexSpace.Match(startCommand.Text).Success)
-            {
-                Errors.Add(new TestError()
-                {
-                    ErrorType = ErrorType.Warning,
-                    ErrorCommand = startText,
-                    ErrorInfo = $"Ожидался текст после команды \\item"
-                });
-                
-                return;
-            }
-
-            for (var i = 0; i < startCommand.Text.Length; i++)
-            {
-                var t = startCommand.Text[i].ToString();
-                
-                if (_regexSpace.Match(t).Success == false &&
-                    _regexUpperCase.Match(t).Success == false &&
-                    _regexLowerCase.Match(t).Success == false)
-                {
-                    {
-                        Errors.Add(new TestError()
-                        {
-                            ErrorType = ErrorType.Warning,
-                            ErrorCommand = startText,
-                            ErrorInfo = $"Ожидался алфавитный символ в начале текста, найден" +
-                                        $" {startCommand.Text[i]}"
-                        });
-                        break;
-                    }
+                    Errors.Add(new TestError() { ErrorCommand = startCmd, ErrorType = ErrorType.Warning, ErrorInfo = $"Элемент списка не начинается с буквы: '{firstChar}'." });
                 }
-
-                if (punctuationCaseWritingType == PunctuationCaseWritingType.DotUppercaseDot)
+                else
                 {
-                    if (_regexUpperCase.Match(t).Success == false)
-                        Errors.Add(new TestError()
-                        {
-                            ErrorType = ErrorType.Error,
-                            ErrorCommand = startCommand,
-                            ErrorInfo = $"Ожидался символ в верхнем регистре в начале текста списка, найден" +
-                                        $" \"{startCommand.Text[i]}\""
-                        });
-                    
-                    break;
-                }
-
-                if (punctuationCaseWritingType == PunctuationCaseWritingType.СolonLowercaseSemicolon)
-                {
-                    if (_regexLowerCase.Match(t).Success == false)
-                        Errors.Add(new TestError()
-                        {
-                            ErrorType = ErrorType.Error,
-                            ErrorCommand = startCommand,
-                            ErrorInfo = $"Ожидался символ в нижнем регистре в начале текста списка, найден" +
-                                        $" \"{startCommand.Text[i]}\""
-                        });
-                    
-                    break;
-                }
-            }
-        }
-        else
-        {
-            Errors.Add(new TestError()
-            {
-                ErrorType = ErrorType.Warning,
-                ErrorCommand = startText,
-                ErrorInfo = $"Ожидался текст после команды \\item"
-            });
-            return;
-        }
-        
-        if (endText is TextCommand endCommand)
-        {
-            for (int i = endCommand.Text.Length - 1; i >= 0; i--)
-            {
-                if (_regexSpace.Match(endCommand.Text[i].ToString()).Success == false)
-                {
-                    if (_regexEndSentence.Match(endCommand.Text[i].ToString()).Success == false)
+                    bool isUpper = char.IsUpper(firstChar);
+                    if (currentWritingType == PunctuationCaseWritingType.DotUppercaseDot && !isUpper)
                     {
-                        Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Warning,
-                                ErrorCommand = endText,
-                                ErrorInfo =
-                                    $"Ожидался символ окончания последнего элемента листа: [{END_SENTENCE_CHARS}]," +
-                                    $" найден" + $" {endCommand.Text[i]}"
-                            });
-                            break;
+                        Errors.Add(new TestError() { ErrorCommand = startCmd, ErrorType = ErrorType.Error, ErrorInfo = $"Ожидался символ в верхнем регистре в начале элемента списка, найден '{firstChar}'." });
                     }
-
-                    if (punctuationCaseWritingType == PunctuationCaseWritingType.DotUppercaseDot
-                        || punctuationCaseWritingType == PunctuationCaseWritingType.СolonLowercaseSemicolon)
+                    else if (currentWritingType == PunctuationCaseWritingType.СolonLowercaseSemicolon && isUpper)
                     {
-                        if (_regexEndSentence.Match(endCommand.Text[i].ToString()).Success == false)
-                            Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Error,
-                                ErrorCommand = endText,
-                                ErrorInfo =
-                                    $"Ожидался символ окончания последнего элемента листа:[{END_SENTENCE_CHARS}]," +
-                                    $" найден {endCommand.Text[i]}"
-                            });
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private void CheckTextWritingType(Command startText, Command endText,
-        PunctuationCaseWritingType punctuationCaseWritingType)
-    {
-        if (startText is TextCommand startCommand)
-        {
-            if (_regexSpace.Match(startCommand.Text).Success)
-            {
-                Errors.Add(new TestError()
-                {
-                    ErrorType = ErrorType.Warning,
-                    ErrorCommand = startText,
-                    ErrorInfo = $"Ожидался текст после команды \\item"
-                });
-                return;
-            }
-
-            for (int i = 0; i < startCommand.Text.Length; i++)
-            {
-                var t = startCommand.Text[i].ToString();
-                
-                if (_regexSpace.Match(t).Success == false)
-                {
-                    if (_regexUpperCase.Match(t).Success == false)
-                    {
-                        if (_regexLowerCase.Match(t).Success == false)
-                        {
-                            Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Warning,
-                                ErrorCommand = startText,
-                                ErrorInfo = $"Ожидался алфавитный символ в начале текста, найден" +
-                                            $" {startCommand.Text[i]}"
-                            });
-                            break;
-                        }
-                    }
-
-                    if (punctuationCaseWritingType == PunctuationCaseWritingType.DotUppercaseDot)
-                    {
-                        if (_regexUpperCase.Match(t).Success == false)
-                            Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Error,
-                                ErrorCommand = startCommand,
-                                ErrorInfo = $"Ожидался символ в верхнем регистре в начале текста списка, найден" +
-                                            $" \"{startCommand.Text[i]}\""
-                            });
-                        break;
-                    }
-
-                    if (punctuationCaseWritingType == PunctuationCaseWritingType.СolonLowercaseSemicolon)
-                    {
-                        if (_regexLowerCase.Match(t).Success == false)
-                            Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Error,
-                                ErrorCommand = startCommand,
-                                ErrorInfo = $"Ожидался символ в нижнем регистре в начале текста списка, найден" +
-                                            $" \"{startCommand.Text[i]}\""
-                            });
-                        break;
+                        Errors.Add(new TestError() { ErrorCommand = startCmd, ErrorType = ErrorType.Error, ErrorInfo = $"Ожидался символ в нижнем регистре в начале элемента списка, найден '{firstChar}'." });
                     }
                 }
             }
         }
         else
         {
-            Errors.Add(new TestError()
-            {
-                ErrorType = ErrorType.Warning,
-                ErrorCommand = startText,
-                ErrorInfo = $"Ожидался текст после команды \\item"
-            });
-            return;
+            Errors.Add(new TestError() { ErrorCommand = (startTextCmd ?? currentItemContext), ErrorType = ErrorType.Warning, ErrorInfo = "Отсутствует текст после команды \\item." });
         }
-        if (endText is TextCommand endCommand)
+
+        if (endTextCmd is TextCommand endCmd && endCmd.Text != null) 
         {
-            for (int i = endCommand.Text.Length - 1; i >= 0; i--)
+            var effectiveEndText = endCmd.Text.TrimEnd();
+            if (!string.IsNullOrEmpty(effectiveEndText))
             {
-                if (_regexSpace.Match(endCommand.Text[i].ToString()).Success == false)
+                char lastChar = effectiveEndText[effectiveEndText.Length -1];
+                bool correctEnding = false;
+                if (isLastItem)
                 {
-                    if (_regexEndSentence.Match(endCommand.Text[i].ToString()).Success == false)
+                    if (END_SENTENCE_CHARS.Contains(lastChar)) correctEnding = true;
+                }
+                else 
+                {
+                    if (currentWritingType == PunctuationCaseWritingType.DotUppercaseDot && END_SENTENCE_CHARS.Contains(lastChar))
                     {
-                        if (endCommand.Text[i].ToString() != ";")
-                        {
-                            Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Warning,
-                                ErrorCommand = endText,
-                                ErrorInfo =
-                                    $"Ожидался символ окончания элемента листа: [{END_SENTENCE_CHARS + ":"}]," +
-                                    $" найден" + $" {endCommand.Text[i]}"
-                            });
-                            break;
-                        }
+                        correctEnding = true;
                     }
-
-                    if (punctuationCaseWritingType == PunctuationCaseWritingType.DotUppercaseDot)
+                    else if (currentWritingType == PunctuationCaseWritingType.СolonLowercaseSemicolon && lastChar == ';')
                     {
-                        if (_regexEndSentence.Match(endCommand.Text[i].ToString()).Success == false)
-                            Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Error,
-                                ErrorCommand = endText,
-                                ErrorInfo =
-                                    $"Ожидался символ окончания элемента листа: [{END_SENTENCE_CHARS}]," +
-                                    $" найден {endCommand.Text[i]}"
-                            });
-                        break;
-                    }
-
-                    if (punctuationCaseWritingType == PunctuationCaseWritingType.СolonLowercaseSemicolon)
-                    {
-                        if (endCommand.Text[i].ToString() != ";")
-                            Errors.Add(new TestError()
-                            {
-                                ErrorType = ErrorType.Error,
-                                ErrorCommand = endText,
-                                ErrorInfo = $"Ожидался символ окончания элемента листа: [;]," +
-                                            $" найден {endCommand.Text[i]}"
-                            });
-                        break;
+                        correctEnding = true;
                     }
                 }
+                if (!correctEnding)
+                {
+                    string expected = isLastItem ? $"[{END_SENTENCE_CHARS}]" : (currentWritingType == PunctuationCaseWritingType.DotUppercaseDot ? $"[{END_SENTENCE_CHARS}]" : ";");
+                    Errors.Add(new TestError { ErrorCommand = endCmd, ErrorType = ErrorType.Error, ErrorInfo = $"Некорректное окончание элемента списка. Ожидалось '{expected}', найдено '{lastChar}'." });
+                }
+            } else {
+                 Errors.Add(new TestError() { ErrorCommand = endCmd, ErrorType = ErrorType.Warning, ErrorInfo = "Элемент списка оканчивается пробельными символами или пуст." });
+            }
+        } else {
+            Command? errorContext = endTextCmd ?? currentItemContext;
+            // No need to cast environmentCommand as it's already EnvironmentCommand type in this corrected version
+            bool isMissingTerminalPunctuation = false;
+            if (isLastItem) {
+                if (endTextCmd == null && (environmentCommand.EndCommand == null || (currentItemContext != null && environmentCommand.EndCommand != null && currentItemContext.GlobalIndex < environmentCommand.EndCommand.GlobalIndex))) { 
+                    isMissingTerminalPunctuation = true;
+                }
+            } else { 
+                if (endTextCmd == null) isMissingTerminalPunctuation = true;
+            }
+
+            if (isMissingTerminalPunctuation) {
+                    string expected = isLastItem ? $"[{END_SENTENCE_CHARS}]" : (currentWritingType == PunctuationCaseWritingType.DotUppercaseDot ? $"[{END_SENTENCE_CHARS}]" : ";");
+                    // Check if the error should indeed be reported
+                    if (currentItemContext != null && (!isLastItem || (environmentCommand.EndCommand != null && currentItemContext.GlobalIndex < environmentCommand.EndCommand.GlobalIndex) || environmentCommand.EndCommand == null )) {
+                    Errors.Add(new TestError() { ErrorCommand = errorContext, ErrorType = ErrorType.Warning, ErrorInfo = $"Отсутствует текст с ожидаемым окончанием '{expected}' после элемента списка." });
+                    }
             }
         }
     }
 }
+EOF_TestEnvironmentWithItemsCommand
+echo "tex-lint/TestFunctionClasses/TestEnvironmentWithItemsCommand.cs replaced."
+
+# Attempt build after fixing TestEnvironmentWithItemsCommand.cs
+$HOME/.dotnet/dotnet build tex-lint/tex-lint.csproj
