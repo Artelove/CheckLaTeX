@@ -1,6 +1,10 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using TexLint.Models;
+using System.Collections.Generic; 
+using System.IO; 
+using System; 
+using System.Linq;
 
 namespace TexLint.TestFunctionClasses;
 
@@ -10,83 +14,90 @@ public class TestCiteToBibItems : TestFunction
     private const string PATTERN_KEY = @"^[\da-zA-Zа-яА-ЯёЁ!?#+=:._-]+$";
     private const string PATTERN_END_OF_STRING = @"[\s]";
     
-    private readonly Regex _regexItemName = new(PATTERN_ITEM);
-    private readonly Regex _regexKey = new(PATTERN_KEY);
-    private readonly Regex _regexSpace = new(PATTERN_END_OF_STRING);
+    private readonly Regex _regexItemName = new Regex(PATTERN_ITEM); 
+    private readonly Regex _regexKey = new Regex(PATTERN_KEY); 
+    private readonly Regex _regexSpace = new Regex(PATTERN_END_OF_STRING); 
 
     public TestCiteToBibItems()
     {
-        //List<Command> cites = new();
         var citeNumberCommand = new Dictionary<string,Command>();
-        var cites = TestUtilities.GetAllCommandsByName("cite");
+        var cites = TestUtilities.GetAllCommandsByName("cite") ?? new List<Command>();
         var bibItems = ParseBibItems();
         
         foreach (var command in cites)
         {
+            if (command == null || command.Arguments == null) continue;
             foreach (var argument in command.Arguments)
             {
-                citeNumberCommand.TryAdd(argument.Text,command);
+                if (argument != null && argument.Text != null) { 
+                    citeNumberCommand.TryAdd(argument.Text,command);
+                }
             }
         }
 
-        bool match;
-        foreach (var command in citeNumberCommand)
+        bool matchFound; 
+        foreach (var commandEntry in citeNumberCommand) 
         {
-            match = false;
+            matchFound = false;
             for (int i = 0; i < bibItems.Count; i++)
             {
-                if (command.Key == bibItems[i].Key) 
+                if (commandEntry.Key == bibItems[i].Key) 
                 {
-                    match = true;
+                    matchFound = true;
                     break;
                 }
             }
 
-            if (match == false)
+            if (matchFound == false)
             {
                 Errors.Add(new TestError()
                 {
                     ErrorType = ErrorType.Error,
-                    ErrorCommand = command.Value,
-                    ErrorInfo = $"Команда \\cite[{command.Key}] не нашла ссылаемого источника."
+                    ErrorCommand = commandEntry.Value,
+                    ErrorInfo = $"Команда \\cite[{commandEntry.Key}] не нашла ссылаемого источника."
                 });
             }
         }
         
-        foreach (var t in bibItems)
+        foreach (var bibItemEntry in bibItems) 
         {
-            match = false;
-            foreach (var command in citeNumberCommand)
+            matchFound = false;
+            foreach (var commandEntry in citeNumberCommand)
             {
-                if (command.Key == t.Key) 
+                if (commandEntry.Key == bibItemEntry.Key) 
                 {
-                    match = true;
+                    matchFound = true;
                     break;
                 }
             }
 
-            if (match == false)
+            if (matchFound == false)
             {
                 Errors.Add(new TestError()
                 {
-                    ErrorType = ErrorType.Error,
-                    ErrorInfo = $"Библиографический источник  Name:{t.Name} Key:{ t.Key} не нашел ожидаемую команду \\cite с ключем {t.Key}."
+                    ErrorType = ErrorType.Warning, 
+                    ErrorCommand = null, 
+                    ErrorInfo = $"Библиографический источник Name:{bibItemEntry.Name} Key:{bibItemEntry.Key} не используется в документе командой \\cite."
                 });
             }
         }
-        
     }
     
     private List<BibItem> FilterNonGrowthItems()
     {
         var bibItems = ParseBibItems();
-        var indexesToDelete = new List<int> ();
+        var indexesToDelete = new List<int>(); 
         
         for (var i = 0; i < bibItems.Count; i++)
         {
-            if (Int32.Parse(bibItems[i].Key) != i + 1)
+            if (Int32.TryParse(bibItems[i].Key, out int keyNumber)) 
             {
-                indexesToDelete.Add(i);
+                 if (keyNumber != i + 1)
+                 {
+                    indexesToDelete.Add(i);
+                 }
+            } else {
+                indexesToDelete.Add(i); 
             }
         }
 
@@ -98,63 +109,83 @@ public class TestCiteToBibItems : TestFunction
         return bibItems;
     }
     
-    private List<BibItem> ParseBibItems()
+   private List<BibItem> ParseBibItems()
     {
-        //Указать в файле конфигурации .bib файл
         var bibItems = new List<BibItem>();
-        var text = new StreamReader(TestUtilities.StartDirectory+"\\"+"Bib.bib").ReadToEnd();
+        var bibFilePath = Path.Combine(TestUtilities.StartDirectory ?? string.Empty, "Bib.bib");
+
+        if (!File.Exists(bibFilePath)) {
+            // ErrorType.Critical does not exist based on previous build errors. Using ErrorType.Error.
+            Errors.Add(new TestError { 
+                ErrorInfo = "Bib.bib file not found at: " + bibFilePath, 
+                ErrorType = ErrorType.Error 
+            });
+            return bibItems;
+        }
+        var text = File.ReadAllText(bibFilePath);
         
-        var readBibItem = false;
-        var readKey = false;
+        var readBibItemName = false;
+        var readBibItemKey = false;
         
-        var item = new BibItem();
+        BibItem currentItem = new BibItem();
         
-        foreach (var t in text)
+        for(int i = 0; i < text.Length; i++)
         {
-            if (_regexSpace.Match(t.ToString()).Success)
-                continue;
-            if (readKey)
+            char ch = text[i];
+
+            if (ch == '@')
             {
-                if (_regexKey.Match(item.Key + t).Success)
+                if (!string.IsNullOrEmpty(currentItem.Name) && !string.IsNullOrEmpty(currentItem.Key))
                 {
-                    item.Key += t;
-                    continue;
+                    if (!bibItems.Any(b => b.Key == currentItem.Key)) bibItems.Add(currentItem);
                 }
-                else
-                {
-                    bibItems.Add(item);
-                    item = new BibItem();
-                    readBibItem = false;
-                    readKey = false;
-                    continue;
-                }
+                currentItem = new BibItem();
+                readBibItemName = true;
+                readBibItemKey = false;
+                continue;
             }
 
-            if (readBibItem)
+            if (readBibItemName)
             {
-                if (_regexItemName.Match(item.Name + t).Success)
-                    item.Name += t;
-                else
+                if (ch == '{')
                 {
-                    readKey = true;
-                    readBibItem = false;
+                    readBibItemName = false;
+                    readBibItemKey = true;
+                    continue;
+                }
+                if (!char.IsWhiteSpace(ch)) 
+                {
+                     currentItem.Name += ch;
                 }
             }
-            else
+            else if (readBibItemKey)
             {
-                if (t == '@')
+                if (ch == ',')
                 {
-                    readBibItem = true;
+                    readBibItemKey = false; 
+                    if (!string.IsNullOrEmpty(currentItem.Name) && !string.IsNullOrEmpty(currentItem.Key))
+                    {
+                         if (!bibItems.Any(b => b.Key == currentItem.Key)) bibItems.Add(currentItem);
+                    }
+                    readBibItemName = false; 
+                    continue;
                 }
+                 if (!char.IsWhiteSpace(ch)) 
+                 {
+                    currentItem.Key += ch;
+                 }
             }
         }
-
+        if (!string.IsNullOrEmpty(currentItem.Name) && !string.IsNullOrEmpty(currentItem.Key) && !bibItems.Any(b => b.Key == currentItem.Key))
+        {
+            bibItems.Add(currentItem);
+        }
         return bibItems;
     }
 }
 
-class BibItem
+class BibItem 
 {
-    public string Name = string.Empty;
-    public string Key = string.Empty;
+    public string Name {get; set;} = string.Empty;
+    public string Key {get; set;} = string.Empty;
 }

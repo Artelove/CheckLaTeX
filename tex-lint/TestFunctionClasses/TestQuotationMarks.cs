@@ -1,6 +1,9 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using TexLint.Models;
 using TexLint.Models.HandleInfos;
+using System.IO; 
+using System.Collections.Generic; 
+using System.Linq; 
 
 namespace TexLint.TestFunctionClasses;
 
@@ -8,101 +11,127 @@ public class TestQuotationMarks : TestFunction
 {
     public TestQuotationMarks()
     {
-        var commands = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToCommandsJson).ReadToEnd());
-        var environments = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToEnvironmentJson).ReadToEnd());
+        var commands = new List<ParseInfo>();
+        // var environments = new List<ParseInfo>(); // Unused
+        try {
+            if(File.Exists(TestUtilities.PathToCommandsJson)){
+                commands = JsonSerializer.Deserialize<List<ParseInfo>>(File.ReadAllText(TestUtilities.PathToCommandsJson)) ?? new List<ParseInfo>();
+            }
+            // if(File.Exists(TestUtilities.PathToEnvironmentJson)){ // Unused
+            //     environments = JsonSerializer.Deserialize<List<ParseInfo>>(File.ReadAllText(TestUtilities.PathToEnvironmentJson)) ?? new List<ParseInfo>();
+            // }
+        } catch (JsonException ex) {
+            // ErrorType.Critical does not exist, using ErrorType.Error
+            Errors.Add(new TestError{ ErrorInfo = "JSON parsing error in TestQuotationMarks: " + ex.Message, ErrorType = ErrorType.Error});
+            return; 
+        }
+        catch (IOException ex) {
+            Errors.Add(new TestError{ ErrorInfo = "File IO error in TestQuotationMarks: " + ex.Message, ErrorType = ErrorType.Error});
+            return;
+        }
 
-        List<string> commandsNamesWherePhraseArgOrParam = new();
-        foreach (var command in commands)
+        List<string> commandsNamesWherePhraseArgOrParam = new List<string>(); 
+        foreach (var commandInfo in commands) 
         {
-            if (command?.Arg.ParseType == ParameterParseType.Phrase ||
-                command?.Param.ParseType == ParameterParseType.Phrase)
+            if (commandInfo != null && 
+                (commandInfo.Arg.ParseType == ParameterParseType.Phrase || commandInfo.Param.ParseType == ParameterParseType.Phrase))
             {
-                commandsNamesWherePhraseArgOrParam.Add(command.Name);
+                 if (commandInfo.Name != null) commandsNamesWherePhraseArgOrParam.Add(commandInfo.Name);
             }
         }
 
-        var commandsWherePhraseArgOrParam = new List<Command>();
-        foreach (var command in TestUtilities.FoundsCommandsWithLstlisting)
-        {
-            if (commandsNamesWherePhraseArgOrParam.Contains(command.Name))
-                commandsWherePhraseArgOrParam.Add(command);
+        var commandsWherePhraseArgOrParam = new List<Command>(); 
+        if (TestUtilities.FoundsCommandsWithLstlisting != null) { 
+            foreach (var command in TestUtilities.FoundsCommandsWithLstlisting)
+            {
+                if (command != null && command.Name != null && commandsNamesWherePhraseArgOrParam.Contains(command.Name)) 
+                    commandsWherePhraseArgOrParam.Add(command);
+            }
         }
 
         foreach (var command in commandsWherePhraseArgOrParam)
         {
-            foreach (var count in command.Arguments.Select(argument => FindMistakeQuatationMarksInText(argument.Text ?? string.Empty) +
-                                                                       FindMistakeQuatationMarksInText(argument.Value ?? string.Empty)))
-            {
-                for (var i = 0; i < count; i++)
-                {
-                    Errors.Add(new TestError()
-                    {
-                        ErrorCommand = command,
-                        ErrorType = ErrorType.Warning,
-                        ErrorInfo = "$Обнаружено использование иных кавычек. Рекомендуется замена на << >> (елочки) в аргументе команды:\n" +
-                                    $"{command}"
-                    });
+            if (command == null) continue;
+            if (command.Arguments != null) {
+                foreach(var arg in command.Arguments) {
+                    if (arg == null) continue;
+                    var (isMistakeText, idxText) = FindMistakeQuatationMarksInTextWithIndex(arg.Text ?? string.Empty);
+                    if(isMistakeText) Errors.Add(CreateQuotationError(command, "аргументе (имя)"));
+                    var (isMistakeValue, idxValue) = FindMistakeQuatationMarksInTextWithIndex(arg.Value ?? string.Empty);
+                    if(isMistakeValue) Errors.Add(CreateQuotationError(command, "аргументе (значение)"));
                 }
             }
-            foreach (var count in command.Parameters.Select(parameter => FindMistakeQuatationMarksInText(parameter.Text ?? string.Empty) +
-                                                                         FindMistakeQuatationMarksInText(parameter.Value ?? string.Empty)))
-            {
-                for (var i = 0; i < count; i++)
-                {
-                    Errors.Add(new TestError()
-                    {
-                        ErrorCommand = command,
-                        ErrorType = ErrorType.Warning,
-                        ErrorInfo = "$Обнаружено использование иных кавычек. Рекомендуется замена на << >> (елочки) в параметре команды:\n" +
-                                    $"{command}"
-                    });
+            if (command.Parameters != null) {
+                 foreach(var param in command.Parameters) {
+                    if (param == null) continue;
+                    var (isMistakeText, idxText) = FindMistakeQuatationMarksInTextWithIndex(param.Text ?? string.Empty);
+                    if(isMistakeText) Errors.Add(CreateQuotationError(command, "параметре (имя)"));
+                    var (isMistakeValue, idxValue) = FindMistakeQuatationMarksInTextWithIndex(param.Value ?? string.Empty);
+                    if(isMistakeValue) Errors.Add(CreateQuotationError(command, "параметре (значение)"));
                 }
             }
-
         }  
-        var textCommands = TestUtilities.GetAllCommandsByName("TEXT_NAME");
-        foreach (var environmentCommand in TestUtilities.GetAllEnvironment())
-        {
-            if (environmentCommand.EnvironmentName != "lstlisting")
-                continue;
-            
-            foreach (var innerCommand in environmentCommand.InnerCommands)
-            {
-                if (innerCommand is TextCommand textCommand)
-                {
-                    textCommands.Remove(textCommand);
-                }
+        
+        var allTextCommands = TestUtilities.GetAllCommandsByName(TextCommand.TEXT_COMMAND_NAME) ?? new List<Command>();
+        var textCommandsToProcess = new List<TextCommand>(allTextCommands.OfType<TextCommand>());
+        
+        var lstlistingEnvs = TestUtilities.GetAllEnvironment()?.Where(e => e != null && e.EnvironmentName == "lstlisting") ?? Enumerable.Empty<EnvironmentCommand>();
+        var textInLstlisting = new HashSet<TextCommand>();
+        foreach (var env in lstlistingEnvs) {
+            if (env.InnerCommands == null) continue;
+            foreach (var innerCmd in env.InnerCommands.OfType<TextCommand>()) {
+                if (innerCmd != null) textInLstlisting.Add(innerCmd);
             }
         }
+        textCommandsToProcess.RemoveAll(tc => tc != null && textInLstlisting.Contains(tc));
 
-        foreach (var command in textCommands)
+        foreach (var textCmd in textCommandsToProcess) 
         {
-            var textCommand = (TextCommand)command;
-            var number = FindMistakeQuatationMarksInText((textCommand as TextCommand)?.Text ?? string.Empty);
-            if(number!=0)
+            if (textCmd == null || textCmd.Text == null) continue; 
+            var (mistakeFound, mistakeIndex) = FindMistakeQuatationMarksInTextWithIndex(textCmd.Text);
+            if(mistakeFound)
             {
                 Errors.Add(new TestError()
                     {
-                        ErrorCommand = textCommand,
+                        ErrorCommand = textCmd,
                         ErrorType = ErrorType.Warning,
                         ErrorInfo =
-                            $"Обнаружено использование иных кавычек. Рекомендуется замена на << >> (елочки) в тексте:\n" +
-                            $"{TestUtilities.GetContentAreaFromFindSymbol(textCommand, number)}"
+                            $"Обнаружено использование иных кавычек. Рекомендуется замена на << >> (елочки) в тексте:\\n" + 
+                            $"{TestUtilities.GetContentAreaFromFindSymbol(textCmd, mistakeIndex)}"
                     });
             }
         }
     }
+    
+    private TestError CreateQuotationError(Command command, string context) {
+        return new TestError() {
+            ErrorCommand = command,
+            ErrorType = ErrorType.Warning,
+            ErrorInfo = $"Обнаружено использование иных кавычек. Рекомендуется замена на << >> (елочки) в {context} команды:\\n{command}"
+        };
+    }
 
-    private int FindMistakeQuatationMarksInText(string text)
+    private (bool, int) FindMistakeQuatationMarksInTextWithIndex(string text)
     {
+        if (string.IsNullOrEmpty(text)) return (false, -1);
         for (var i = 0; i < text.Length; i++)
         {
-            if (text[i] == '\"' || text[i] == '\'')
+            // Corrected char literal for single quote
+            if ((text[i] == '\"' || text[i] == '\'')) 
             {
-                return i;
+                // Basic LaTeX-aware skipping for `` and '' pairs
+                if (text[i] == '\'') { // If current is single quote
+                    if (i > 0 && text[i-1] == '\'') continue; // Part of '' (LaTeX right quote)
+                    if (i + 1 < text.Length && text[i+1] == '\'') continue; // Part of '' (LaTeX right quote)
+                    if (i > 0 && text[i-1] == '`') continue; // Part of `' (LaTeX apostrophe)
+                }
+                if (text[i] == '`') { // If current is backtick (often part of LaTeX left quote)
+                     if (i > 0 && text[i-1] == '`') continue; // Part of `` (LaTeX left quote)
+                     if (i + 1 < text.Length && text[i+1] == '`') continue; // Part of `` (LaTeX left quote)
+                }
+                return (true, i);
             }
         }
-
-        return 0;
+        return (false, -1);
     }
 }

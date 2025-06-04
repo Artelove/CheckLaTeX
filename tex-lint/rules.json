@@ -1,0 +1,38 @@
+[
+  {
+    "ruleId": "NoDoubleSlashes",
+    "enabled": true,
+    "description": "Detects unnecessary double backslashes not part of a valid LaTeX command.",
+    "severity": "Warning",
+    "testFunctionName": "DoubleSlashTest",
+    "parameters": {},
+    "errorMessage": "Unnecessary double backslash found. Context: '{context}'.",
+    "suggestion": "Remove one of the backslashes. If a line break with indent was intended, consider using appropriate LaTeX commands."
+  },
+  {
+    "ruleId": "CheckSpecificCommandParam",
+    "enabled": true,
+    "description": "Checks if a specific LaTeX command has an expected parameter value.",
+    "severity": "Error",
+    "testFunctionName": "SpecificCommandParamTest",
+    "parameters": {
+      "commandName": "documentclass",
+      "parameterName": "substylefile",
+      "expectedValue": "VolSU.rtx"
+    },
+    "errorMessage": "Command '{commandName}' parameter '{parameterName}' has value '{actualValue}', expected '{expectedValue}'.",
+    "suggestion": "Ensure parameter '{parameterName}' for command '{commandName}' is set to '{expectedValue}'."
+  },
+  {
+    "ruleId": "DummyTestRule",
+    "enabled": false,
+    "description": "A disabled rule for testing purposes.",
+    "severity": "Info",
+    "testFunctionName": "DummyTest",
+    "parameters": {
+      "someValue": 42
+    },
+    "errorMessage": "This is a dummy test error with value {someValue}.",
+    "suggestion": "No suggestion for dummy rule."
+  }
+]

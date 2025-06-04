@@ -1,8 +1,11 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using TexLint.Models;
 using TexLint.Models.HandleInfos;
+using System.IO; 
+using System.Collections.Generic; 
+using System.Linq; 
 
 namespace TexLint.TestFunctionClasses;
 
@@ -10,170 +13,134 @@ public class TestHyphenInsteadOfDash : TestFunction
 {
   public TestHyphenInsteadOfDash()
     {
-        var commands = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToCommandsJson).ReadToEnd());
-        var environments = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToEnvironmentJson).ReadToEnd());
+        var commands = new List<ParseInfo>();
+        try {
+            if(File.Exists(TestUtilities.PathToCommandsJson)) {
+                 commands = JsonSerializer.Deserialize<List<ParseInfo>>(File.ReadAllText(TestUtilities.PathToCommandsJson)) ?? new List<ParseInfo>();
+            }
+        } catch (JsonException ex) {
+            Errors.Add(new TestError{ ErrorInfo = "JSON parsing error in TestHyphen: " + ex.Message, ErrorType = ErrorType.Error});
+            return; 
+        }
+        catch (IOException ex) {
+            Errors.Add(new TestError{ ErrorInfo = "File IO error in TestHyphen: " + ex.Message, ErrorType = ErrorType.Error});
+            return;
+        }
 
-        List<string> commandsNamesWherePhraseArgOrParam = new();
-        foreach (var command in commands)
+        List<string> commandsNamesWherePhraseArgOrParam = new List<string>(); 
+        foreach (var commandInfo in commands) 
         {
-            if (command?.Arg.ParseType == ParameterParseType.Phrase ||
-                command?.Param.ParseType == ParameterParseType.Phrase)
+            if (commandInfo != null && 
+                (commandInfo.Arg.ParseType == ParameterParseType.Phrase || 
+                 commandInfo.Param.ParseType == ParameterParseType.Phrase))
             {
-                commandsNamesWherePhraseArgOrParam.Add(command.Name);
+                if (commandInfo.Name != null) commandsNamesWherePhraseArgOrParam.Add(commandInfo.Name);
             }
         }
 
         var commandsWherePhraseArgOrParam = new List<Command>();
         
-        foreach (var command in TestUtilities.FoundsCommandsWithLstlisting)
-        {
-            if (commandsNamesWherePhraseArgOrParam.Contains(command.Name))
-                commandsWherePhraseArgOrParam.Add(command);
+        if (TestUtilities.FoundsCommandsWithLstlisting != null) { 
+            foreach (var command in TestUtilities.FoundsCommandsWithLstlisting)
+            {
+                if (command != null && command.Name != null && commandsNamesWherePhraseArgOrParam.Contains(command.Name)) 
+                    commandsWherePhraseArgOrParam.Add(command);
+            }
         }
 
         foreach (var command in commandsWherePhraseArgOrParam)
         {
-            foreach (var count in command.Arguments.Select(argument => FindMistakeHyphenInText(argument.Text ?? string.Empty) +
-                                                                       FindMistakeHyphenInText(argument.Value ?? string.Empty)))
-            {
-                for (var i = 0; i < count; i++)
-                {
-                    Errors.Add(new TestError()
-                    {
-                        ErrorCommand = command,
-                        ErrorType = ErrorType.Warning,
-                        ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в аргументе команды:\n" +
-                                    $"{command}"
-                    });
+            if (command == null) continue;
+            if (command.Arguments != null) {
+                foreach(var arg in command.Arguments) {
+                    if (arg == null) continue;
+                    var (isMistakeText, idxText) = FindMistakeHyphenInTextWithIndex(arg.Text ?? string.Empty);
+                    if(isMistakeText) Errors.Add(CreateHyphenError(command, "аргументе (имя)"));
+                    var (isMistakeValue, idxValue) = FindMistakeHyphenInTextWithIndex(arg.Value ?? string.Empty);
+                    if(isMistakeValue) Errors.Add(CreateHyphenError(command, "аргументе (значение)"));
                 }
             }
-
-            foreach (var count in command.Parameters.Select(parameter => FindMistakeHyphenInText(parameter?.Text ?? string.Empty) +
-                                                                         FindMistakeHyphenInText(parameter?.Value ?? string.Empty)))
-            {
-                for (var i = 0; i < count; i++)
-                {
-                    Errors.Add(new TestError()
-                    {
-                        ErrorCommand = command,
-                        ErrorType = ErrorType.Warning,
-                        ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в параметре команды:\n" +
-                                    $"{command}"
-                    });
+            if (command.Parameters != null) {
+                 foreach(var param in command.Parameters) {
+                    if (param == null) continue;
+                    var (isMistakeText, idxText) = FindMistakeHyphenInTextWithIndex(param.Text ?? string.Empty);
+                    if(isMistakeText) Errors.Add(CreateHyphenError(command, "параметре (имя)"));
+                    var (isMistakeValue, idxValue) = FindMistakeHyphenInTextWithIndex(param.Value ?? string.Empty);
+                    if(isMistakeValue) Errors.Add(CreateHyphenError(command, "параметре (значение)"));
                 }
             }
         }
         
-        var textCommands = TestUtilities.GetAllCommandsByName(TextCommand.TEXT_COMMAND_NAME);
+        var allTextCommands = TestUtilities.GetAllCommandsByName(TextCommand.TEXT_COMMAND_NAME) ?? new List<Command>();
+        var textCommandsToProcess = new List<TextCommand>(allTextCommands.OfType<TextCommand>());
         
-        foreach (var environmentCommand in TestUtilities.GetAllEnvironment())
-        {
-            if (environmentCommand.EnvironmentName == "lstlisting")
-            {
-                foreach (var innerCommand in environmentCommand.InnerCommands)
-                {
-                    if (innerCommand is TextCommand textCommand)
-                    {
-                        textCommands.Remove(textCommand);
-                    }
-                }
+        var lstlistingEnvs = TestUtilities.GetAllEnvironment()?.Where(e => e != null && e.EnvironmentName == "lstlisting") ?? Enumerable.Empty<EnvironmentCommand>();
+        var textInLstlisting = new HashSet<TextCommand>();
+        foreach (var env in lstlistingEnvs) {
+            if (env.InnerCommands == null) continue;
+            foreach (var innerCmd in env.InnerCommands.OfType<TextCommand>()) {
+                if (innerCmd != null) textInLstlisting.Add(innerCmd);
             }
         }
-
-        var ignoreEnvironments = new List<EnvironmentCommand> ();
-        foreach (var environment in TestUtilities.GetAllEnvironment())
-        {
-            if(environment.EnvironmentName == "equation" ||
-               environment.EnvironmentName == "comment")
-                ignoreEnvironments.Add(environment);
+        textCommandsToProcess.RemoveAll(tc => tc != null && textInLstlisting.Contains(tc));
+        
+        var ignoreEnvironmentNames = new HashSet<string> { "equation", "comment" };
+        var textInIgnoredEnvs = new HashSet<TextCommand>();
+        var ignoredEnvs = TestUtilities.GetAllEnvironment()?.Where(e => e != null && ignoreEnvironmentNames.Contains(e.EnvironmentName)) ?? Enumerable.Empty<EnvironmentCommand>();
+        foreach (var env in ignoredEnvs) {
+            CollectTextCommandsRecursive(env, textInIgnoredEnvs);
         }
+        textCommandsToProcess.RemoveAll(tc => tc != null && textInIgnoredEnvs.Contains(tc));
 
-        var  next = false;
-        for (var i = 0; i < textCommands.Count; i++)
+        foreach (var textCmd in textCommandsToProcess) 
         {
-            next = false;
-            foreach (var environmentCommand in ignoreEnvironments)
-            {
-                foreach (var innerCommand in environmentCommand.InnerCommands)
-                {
-                    if (innerCommand is EnvironmentCommand _innerCommand)
-                    {
-                        foreach (var __innerCommand in _innerCommand.InnerCommands)
-                        {
-                            if (__innerCommand is TextCommand _textCommand)
-                            {
-                                if (_textCommand == textCommands[i])
-                                {
-                                    textCommands[i] = null;
-                                    next = true;
-                                    break;
-                                }
-                            }
-                            
-                            if(next)
-                                break;
-                        }
-                    }
-                    
-                    if(next)
-                        break;
-
-                    if (innerCommand is not TextCommand textCommand)
-                        continue;
-
-                    if (textCommand != textCommands[i])
-                        continue;
-                    
-                    textCommands[i] = null;
-                    next = true;
-                    break;
-                }
-                
-                if(next)
-                    break;
-            }
-        }
-
-        foreach (var command in textCommands)
-        {   
-            if(command==null) 
-                continue;
-            
-            var textCommand = (TextCommand)command;
-            var number = FindMistakeHyphenInText(textCommand?.Text ?? string.Empty);
-            if (number != 0)
+            if (textCmd == null || textCmd.Text == null) continue; 
+            var (isMistake, mistakeIndex) = FindMistakeHyphenInTextWithIndex(textCmd.Text); 
+            if (isMistake)
             {
                 Errors.Add(new TestError()
                     {
-                        ErrorCommand = textCommand,
+                        ErrorCommand = textCmd,
                         ErrorType = ErrorType.Warning,
-                        ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в тексте:\n" +
-                                    $"{TestUtilities.GetContentAreaFromFindSymbol(textCommand, number)}"
+                        ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в тексте:\n" + 
+                                    $"{TestUtilities.GetContentAreaFromFindSymbol(textCmd, mistakeIndex)}" 
                     });
             }
         }
     }
 
-    private int FindMistakeHyphenInText(string text)
+    private void CollectTextCommandsRecursive(EnvironmentCommand env, HashSet<TextCommand> collection)
     {
+        if (env == null || env.InnerCommands == null) return;
+        foreach(var innerCmd in env.InnerCommands)
+        {
+            if (innerCmd is TextCommand tc && tc != null) collection.Add(tc);
+            else if (innerCmd is EnvironmentCommand innerEnv && innerEnv != null) CollectTextCommandsRecursive(innerEnv, collection);
+        }
+    }
+
+    private TestError CreateHyphenError(Command command, string context) {
+        return new TestError() {
+            ErrorCommand = command,
+            ErrorType = ErrorType.Warning,
+            ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в {context} команды:\n{command}"
+        };
+    }
+
+    private (bool, int) FindMistakeHyphenInTextWithIndex(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return (false, -1);
         for (var i = 0; i < text.Length; i++)
         {
             if (text[i] != '-')
                 continue;
             
-            bool left = true;
-            bool right = true;
+            bool leftIsSpaceOrStart = (i == 0) || Char.IsWhiteSpace(text[i - 1]);
+            bool rightIsSpaceOrEnd = (i == text.Length - 1) || Char.IsWhiteSpace(text[i + 1]);
             
-            if(i - 1 >= 0)
-                left = Char.IsWhiteSpace(text[i - 1]);
-            
-            if (i + 1 < text.Length)
-                right = Char.IsWhiteSpace(text[i + 1]);
-            
-            if(left && right)
-                return i;
+            if(leftIsSpaceOrStart && rightIsSpaceOrEnd && !(text.Length == 1 && i == 0)) 
+                return (true, i); 
         }
-
-        return 0;
+        return (false, -1);
     }
 }

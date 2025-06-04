@@ -1,81 +1,51 @@
-﻿using System.Text.Json;
+using System.Collections.Generic; 
+using System.Text; 
 
 namespace TexLint.Models;
 
 public class Command
 {
-    /// <summary>
-    /// Имя команды
-    /// </summary>
-    public string Name = string.Empty;
+    public string Name { get; set; } = string.Empty; 
+    public string FileOwner { get; set; } = string.Empty;
+    public int StringNumber { get; set; }
+    public int StartSymbolNumber { get; set; }
+    public int EndSymbolNumber { get; set; }
+    public int FileIndex { get; set; } 
+    public int GlobalIndex { get; set; }
 
-    /// <summary>
-    /// Имя файла, в котором была найдена команда
-    /// </summary>
-    public string FileOwner = string.Empty;
+    public List<Parameter> Parameters { get; set; } = new List<Parameter>(); 
+    public List<Parameter> Arguments { get; set; } = new List<Parameter>(); 
 
-    /// <summary>
-    /// Номер строки, в которой была найдена команда
-    /// </summary>
-    
-    public int StringNumber;
-    /// <summary>
-    /// Номер символа, с которого начинается команда
-    /// /// </summary>
-    public int StartSymbolNumber;
-
-    /// <summary>
-    /// Номер символа, с которого заканчивается команда
-    /// /// </summary>
-    public int EndSymbolNumber;
-
-    /// <summary>
-    /// Номер файла, в котором была найдена команда
-    /// /// </summary>
-    public int FileIndex;
-
-    /// <summary>
-    /// Номер команды в файле
-    /// </summary>
-    public int GlobalIndex;
-
-    /// <summary>
-    /// Параметры команды
-    /// </summary>
-    public List<Parameter> Parameters = new();
-
-    /// <summary>
-    /// Аргументы команды
-    /// /// </summary>
-    public List<Parameter> Arguments = new();
-
-    /// <summary>
-    /// Текстовый конструктор команды
-    /// </summary>
     public override string ToString()
     {
-        return $"\\{Name}{ParamsToString(Parameters, '[', ']', "=", ',')}{ParamsToString(Arguments, '{', '}', ":", ',')}";
+        var sb = new StringBuilder();
+        sb.Append('\\'); // Backslash character
+        sb.Append(Name);
+        sb.Append(ParamsToString(Parameters, '[', ']', "=", ','));
+        sb.Append(ParamsToString(Arguments, '{', '}', "=", ',')); 
+        return sb.ToString();
     }
 
     private string ParamsToString(List<Parameter> list, char open, char close, string valueSeparator, char itemSeparator)
     {
-        if (list.Count == 0)
+        if (list == null || list.Count == 0)
             return string.Empty;
 
-        var str = open.ToString();
+        var sb = new StringBuilder();
+        sb.Append(open);
         for (int i = 0; i < list.Count; i++)
         {
-            str += list[i].Text;
+            if (list[i] == null) continue;
+            sb.Append(list[i].Text);
             if (list[i].Value is not null)
             {
-                str += valueSeparator;
-                str += list[i].Value;
+                sb.Append(valueSeparator);
+                sb.Append(list[i].Value);
             }
             if (i < list.Count - 1)
-                str += itemSeparator;
+                sb.Append(itemSeparator);
         }
-        str += close;
-        return str;
+        sb.Append(close);
+        return sb.ToString();
     }
 }
-
