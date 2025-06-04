@@ -10,7 +10,7 @@ class Program
     {
         Console.WriteLine("Enter start folder name");
         var startFile = "Thesis.tex";
-        var? startDirectory = Console.ReadLine();
+        string? startDirectory = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(startDirectory))
         {
             Console.WriteLine("Путь не может быть пустым");
