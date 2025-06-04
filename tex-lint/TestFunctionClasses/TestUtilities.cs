@@ -17,7 +17,7 @@ public static class TestUtilities
     public static string StartDirectory { get; set; } = string.Empty;
     public static List<Command> GetAllCommandsByName(string name)
     {
-        var founds = new();
+        var founds = new List<Command>();
         foreach (var command in FoundsCommands)
             if(command.Name == name)
                 founds.Add(command);
@@ -25,7 +25,7 @@ public static class TestUtilities
     }
     public static List<Command> GetAllCommandsByNameFromList(string name, IEnumerable<Command> list)
     {
-        var founds = new();
+        var founds = new List<Command>();
         foreach (var command in list)
             if(command.Name == name)
                 founds.Add(command);
@@ -42,7 +42,7 @@ public static class TestUtilities
     public static List<Command> GetAllCommandsLikeParametersFromLstlisting()
     {
         List<EnvironmentCommand> founds = GetAllEnvironment();
-        var foundsCommand = new();
+        var foundsCommand = new List<Command>();
         foreach (var found in founds)
         {
             if (found.EnvironmentName == "lstlisting")
@@ -55,12 +55,12 @@ public static class TestUtilities
 
     public static List<Command> GetAllCommandsLikeParametersFromEnvironment(EnvironmentCommand environmentCommand)
     {
-        var foundsCommand = new();
+        var foundsCommand = new List<Command>();
         foreach (var argument in environmentCommand.Parameters)
         {
             foundsCommand.Add(new Command()
             {
-                varNumber = environmentCommand.StringNumber,
+                StringNumber = environmentCommand.StringNumber,
                 FileOwner = environmentCommand.FileOwner,
                 Name = argument.Text,
                 Arguments = new()
