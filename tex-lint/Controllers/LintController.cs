@@ -1,18 +1,37 @@
+using Microsoft.AspNetCore.Mvc;
 using TexLint.Models;
+using System.Text;
 
 namespace TexLint.Controllers;
 
-public class LintController
+[ApiController]
+[Route("api/[controller]")]
+public class LintController : ControllerBase
 {
-    private readonly CommandHandler _commandHandler;
-
-    public LintController(string startFile, string startDirectory)
+    [HttpPost]
+    public ActionResult<string> Analyze([FromBody] LintRequest request)
     {
-        _commandHandler = new CommandHandler(startFile, startDirectory);
-    }
+        var workingDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(workingDirectory);
 
-    public List<Command> Analyze()
-    {
-        return _commandHandler.FindAllCommandsInDocument();
+        foreach (var kv in request.Files)
+        {
+            var filePath = Path.Combine(workingDirectory, kv.Key);
+            var dir = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(dir))
+                Directory.CreateDirectory(dir);
+            System.IO.File.WriteAllText(filePath, kv.Value);
+        }
+
+        var handler = new CommandHandler(request.StartFile, workingDirectory);
+        var commands = handler.FindAllCommandsInDocument();
+        var builder = new StringBuilder();
+        foreach (var command in commands)
+        {
+            builder.Append(command.ToString());
+        }
+
+        Directory.Delete(workingDirectory, true);
+        return builder.ToString();
     }
 }
