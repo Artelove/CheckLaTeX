@@ -8,10 +8,13 @@ namespace TexLint.TestFunctionClasses;
 
 public class TestHyphenInsteadOfDash : TestFunction
 {
+    private readonly char _wrongHyphen;
   public TestHyphenInsteadOfDash()
     {
         var commands = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToCommandsJson).ReadToEnd());
         var environments = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToEnvironmentJson).ReadToEnd());
+        var rules = JsonSerializer.Deserialize<LintRules>(new StreamReader(TestUtilities.PathToLintRulesJson).ReadToEnd());
+        _wrongHyphen = string.IsNullOrEmpty(rules?.Hyphen.WrongSymbol) ? '-' : rules.Hyphen.WrongSymbol[0];
 
         List<string> commandsNamesWherePhraseArgOrParam = new();
         foreach (var command in commands)
@@ -158,7 +161,7 @@ public class TestHyphenInsteadOfDash : TestFunction
     {
         for (var i = 0; i < text.Length; i++)
         {
-            if (text[i] != '-')
+            if (text[i] != _wrongHyphen)
                 continue;
             
             bool left = true;
