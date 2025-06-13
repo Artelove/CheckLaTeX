@@ -12,6 +12,7 @@ public static class TestUtilities
 {
     public static string PathToCommandsJson = "commands.json";
     public static string PathToEnvironmentJson = "environments.json";
+    public static string PathToLintRulesJson = "lint-rules.json";
     public static List<Command> FoundsCommands { get; set; }
     public static List<Command> FoundsCommandsWithLstlisting { get; set; }
     public static string StartDirectory { get; set; } = string.Empty;

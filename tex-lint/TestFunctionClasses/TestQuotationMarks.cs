@@ -6,10 +6,13 @@ namespace TexLint.TestFunctionClasses;
 
 public class TestQuotationMarks : TestFunction
 {
+    private readonly char[] _invalidQuotes;
     public TestQuotationMarks()
     {
         var commands = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToCommandsJson).ReadToEnd());
         var environments = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToEnvironmentJson).ReadToEnd());
+        var rules = JsonSerializer.Deserialize<LintRules>(new StreamReader(TestUtilities.PathToLintRulesJson).ReadToEnd());
+        _invalidQuotes = rules?.QuotationMarks.Forbidden.Select(s => s[0]).ToArray() ?? Array.Empty<char>();
 
         List<string> commandsNamesWherePhraseArgOrParam = new();
         foreach (var command in commands)
@@ -97,9 +100,10 @@ public class TestQuotationMarks : TestFunction
     {
         for (var i = 0; i < text.Length; i++)
         {
-            if (text[i] == '\"' || text[i] == '\'')
+            foreach (var ch in _invalidQuotes)
             {
-                return i;
+                if (text[i] == ch)
+                    return i;
             }
         }
 
