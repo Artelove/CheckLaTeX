@@ -1,0 +1,462 @@
+# Cursor Rules для CheckLaTeX Project
+
+## Общие принципы разработки
+
+Ты - эксперт C# разработчик, специализирующийся на создании инструментов для анализа и проверки LaTeX документов. Следуй этим принципам:
+
+### Архитектурные принципы проекта
+- **LaTeX Document Processing**: Всегда учитывай специфику LaTeX синтаксиса при разработке парсеров
+- **Rule-Based Validation**: Используй конфигурационный подход через `lint-rules.json` для определения правил проверки
+- **Extensible Design**: Проектируй с возможностью легкого добавления новых правил проверки
+- **Performance**: Оптимизируй для обработки больших LaTeX документов
+
+### Технологический стек
+- **.NET 6.0** - базовая платформа
+- **ASP.NET Core Web API** для HTTP endpoints
+- **JSON Configuration** для правил линтинга
+- **LaTeX Parsing** - кастомные парсеры для анализа LaTeX синтаксиса
+
+## Структура проекта
+
+### Слои архитектуры:
+```
+tex-lint/
+├── Controllers/          # Web API controllers для обработки запросов
+├── Models/              # Модели данных
+│   └── HandleInfos/     # Информационные модели для обработки
+├── TestFunctionClasses/ # Классы тестовых функций для проверки правил
+├── bin/                 # Скомпилированные файлы
+└── obj/                 # Объектные файлы сборки
+lint-rules.json          # Конфигурация правил проверки
+```
+
+## Правила кодирования
+
+### 1. Именование (соответствует C# conventions)
+- **Классы**: PascalCase (`LatexParser`, `QuotationMarkChecker`)
+- **Методы**: PascalCase (`ParseDocument`, `ValidateQuotationMarks`)
+- **Поля**: camelCase с underscore prefix (`_ruleEngine`, `_latexContent`)
+- **Константы**: UPPER_SNAKE_CASE (`MAX_DOCUMENT_SIZE`, `DEFAULT_ENCODING`)
+- **Namespace**: `CheckLaTeX.TexLint.*`
+
+### 2. LaTeX Parser Design
+```csharp
+// Базовый интерфейс для правил проверки
+public interface ILintRule
+{
+    string RuleName { get; }
+    LintResult Validate(LatexDocument document);
+    bool IsEnabled { get; set; }
+}
+
+// Модель для представления LaTeX документа
+public class LatexDocument
+{
+    public string Content { get; set; }
+    public string FilePath { get; set; }
+    public List<LatexElement> Elements { get; set; }
+    public Dictionary<string, object> Metadata { get; set; }
+}
+
+// Результат проверки правила
+public class LintResult
+{
+    public bool IsValid { get; set; }
+    public List<LintIssue> Issues { get; set; }
+    public string RuleName { get; set; }
+}
+
+public class LintIssue
+{
+    public int LineNumber { get; set; }
+    public int ColumnNumber { get; set; }
+    public string Message { get; set; }
+    public string SuggestedFix { get; set; }
+    public LintSeverity Severity { get; set; }
+}
+
+public enum LintSeverity
+{
+    Info,
+    Warning,
+    Error
+}
+```
+
+### 3. Configuration-Based Rules (работа с lint-rules.json)
+```csharp
+// Класс для загрузки конфигурации правил
+public class RuleConfiguration
+{
+    public QuotationMarksConfig QuotationMarks { get; set; }
+    public HyphenConfig Hyphen { get; set; }
+    
+    public static RuleConfiguration LoadFromFile(string filePath)
+    {
+        var json = File.ReadAllText(filePath);
+        return JsonSerializer.Deserialize<RuleConfiguration>(json);
+    }
+}
+
+public class QuotationMarksConfig
+{
+    public string PreferredOpen { get; set; }
+    public string PreferredClose { get; set; }
+    public List<string> Forbidden { get; set; }
+}
+
+public class HyphenConfig
+{
+    public string WrongSymbol { get; set; }
+    public string Replacement { get; set; }
+}
+
+// Правило проверки кавычек
+public class QuotationMarksRule : ILintRule
+{
+    private readonly QuotationMarksConfig _config;
+    
+    public string RuleName => "QuotationMarks";
+    public bool IsEnabled { get; set; } = true;
+    
+    public QuotationMarksRule(QuotationMarksConfig config)
+    {
+        _config = config ?? throw new ArgumentNullException(nameof(config));
+    }
+    
+    public LintResult Validate(LatexDocument document)
+    {
+        var result = new LintResult { RuleName = RuleName, Issues = new List<LintIssue>() };
+        
+        // КРИТИЧНО: Сохраняем существующую логику парсинга LaTeX
+        var lines = document.Content.Split('\n');
+        for (int i = 0; i < lines.Length; i++)
+        {
+            foreach (var forbidden in _config.Forbidden)
+            {
+                if (lines[i].Contains(forbidden))
+                {
+                    result.Issues.Add(new LintIssue
+                    {
+                        LineNumber = i + 1,
+                        ColumnNumber = lines[i].IndexOf(forbidden) + 1,
+                        Message = $"Использование запрещенных кавычек '{forbidden}'. Используйте '{_config.PreferredOpen}' и '{_config.PreferredClose}'",
+                        SuggestedFix = lines[i].Replace(forbidden, 
+                            forbidden == "\"" ? _config.PreferredOpen : _config.PreferredClose),
+                        Severity = LintSeverity.Warning
+                    });
+                }
+            }
+        }
+        
+        result.IsValid = result.Issues.Count == 0;
+        return result;
+    }
+}
+```
+
+### 4. Test Function Classes Pattern
+```csharp
+// Базовый класс для тестовых функций
+public abstract class TestFunctionBase
+{
+    protected readonly RuleConfiguration _ruleConfig;
+    
+    protected TestFunctionBase(RuleConfiguration ruleConfig)
+    {
+        _ruleConfig = ruleConfig;
+    }
+    
+    public abstract string FunctionName { get; }
+    public abstract TestResult Execute(string latexContent);
+}
+
+// Конкретная тестовая функция для кавычек
+public class QuotationMarksTestFunction : TestFunctionBase
+{
+    public override string FunctionName => "TestQuotationMarks";
+    
+    public QuotationMarksTestFunction(RuleConfiguration ruleConfig) : base(ruleConfig) { }
+    
+    public override TestResult Execute(string latexContent)
+    {
+        var rule = new QuotationMarksRule(_ruleConfig.QuotationMarks);
+        var document = new LatexDocument { Content = latexContent };
+        var lintResult = rule.Validate(document);
+        
+        return new TestResult
+        {
+            FunctionName = FunctionName,
+            Passed = lintResult.IsValid,
+            Issues = lintResult.Issues,
+            ExecutionTime = TimeSpan.FromMilliseconds(/* время выполнения */)
+        };
+    }
+}
+
+public class TestResult
+{
+    public string FunctionName { get; set; }
+    public bool Passed { get; set; }
+    public List<LintIssue> Issues { get; set; }
+    public TimeSpan ExecutionTime { get; set; }
+    public string ErrorMessage { get; set; }
+}
+```
+
+### 5. Controller Design
+```csharp
+[ApiController]
+[Route("api/[controller]")]
+public class LatexLintController : ControllerBase
+{
+    private readonly ILogger<LatexLintController> _logger;
+    private readonly RuleConfiguration _ruleConfig;
+    private readonly IList<ILintRule> _lintRules;
+    
+    public LatexLintController(
+        ILogger<LatexLintController> logger,
+        RuleConfiguration ruleConfig,
+        IList<ILintRule> lintRules)
+    {
+        _logger = logger;
+        _ruleConfig = ruleConfig;
+        _lintRules = lintRules;
+    }
+    
+    [HttpPost("validate")]
+    public async Task<ActionResult<ValidationResponse>> ValidateLatexDocument([FromBody] ValidateRequest request)
+    {
+        try
+        {
+            var document = new LatexDocument 
+            { 
+                Content = request.Content,
+                FilePath = request.FilePath 
+            };
+            
+            var results = new List<LintResult>();
+            
+            foreach (var rule in _lintRules.Where(r => r.IsEnabled))
+            {
+                var result = rule.Validate(document);
+                results.Add(result);
+            }
+            
+            return Ok(new ValidationResponse
+            {
+                IsValid = results.All(r => r.IsValid),
+                Results = results,
+                ProcessedAt = DateTime.UtcNow
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error validating LaTeX document");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+    
+    [HttpGet("rules")]
+    public ActionResult<RuleConfiguration> GetRules()
+    {
+        return Ok(_ruleConfig);
+    }
+}
+
+public class ValidateRequest
+{
+    public string Content { get; set; }
+    public string FilePath { get; set; }
+}
+
+public class ValidationResponse
+{
+    public bool IsValid { get; set; }
+    public List<LintResult> Results { get; set; }
+    public DateTime ProcessedAt { get; set; }
+}
+```
+
+### 6. Dependency Injection Configuration
+```csharp
+// Program.cs или Startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    // Загрузка конфигурации правил
+    var ruleConfig = RuleConfiguration.LoadFromFile("lint-rules.json");
+    services.AddSingleton(ruleConfig);
+    
+    // Регистрация правил проверки
+    services.AddTransient<ILintRule, QuotationMarksRule>(provider => 
+        new QuotationMarksRule(provider.GetService<RuleConfiguration>().QuotationMarks));
+    services.AddTransient<ILintRule, HyphenRule>(provider => 
+        new HyphenRule(provider.GetService<RuleConfiguration>().Hyphen));
+    
+    // Регистрация тестовых функций
+    services.AddTransient<TestFunctionBase, QuotationMarksTestFunction>();
+    services.AddTransient<TestFunctionBase, HyphenTestFunction>();
+    
+    services.AddControllers();
+    services.AddLogging();
+}
+```
+
+## Критически важные принципы для этого проекта
+
+### 1. Сохранение логики парсинга LaTeX
+- **НЕ ИЗМЕНЯЙ** существующие алгоритмы парсинга LaTeX без крайней необходимости
+- **ДОПОЛНЯЙ**, а не заменяй существующую логику обработки документов
+- Всегда тестируй изменения на реальных LaTeX документах
+- Сохраняй обратную совместимость с существующими правилами
+
+### 2. Работа с TestFunctionClasses
+- Каждая тестовая функция должна быть независимой
+- Используй единообразный интерфейс для всех тестовых функций
+- Обеспечивай детальное логирование результатов тестирования
+- Поддерживай возможность запуска отдельных тестов
+
+### 3. Конфигурация через lint-rules.json
+- Всегда валидируй структуру JSON при загрузке
+- Добавляй новые правила без нарушения существующей структуры
+- Поддерживай hot-reload конфигурации
+- Документируй все новые параметры конфигурации
+
+### 4. LaTeX-специфичные требования
+```csharp
+// Правильная обработка LaTeX команд
+public static class LatexConstants
+{
+    public const string COMMAND_PREFIX = "\\";
+    public const string COMMENT_PREFIX = "%";
+    public const string MATH_INLINE_DELIMITER = "$";
+    public const string MATH_DISPLAY_DELIMITER = "$$";
+    
+    // Список команд, которые нужно игнорировать при проверке текста
+    public static readonly HashSet<string> IGNORED_COMMANDS = new()
+    {
+        "\\label", "\\ref", "\\cite", "\\bibliography", "\\bibliographystyle",
+        "\\include", "\\input", "\\usepackage", "\\documentclass"
+    };
+}
+
+// Парсер для извлечения текстового содержимого
+public class LatexTextExtractor
+{
+    public string ExtractTextContent(string latexContent)
+    {
+        // КРИТИЧНО: Сохраняем существующую логику извлечения текста
+        // Удаляем комментарии
+        var lines = latexContent.Split('\n');
+        var contentLines = lines.Select(line =>
+        {
+            var commentIndex = line.IndexOf('%');
+            return commentIndex >= 0 ? line.Substring(0, commentIndex) : line;
+        });
+        
+        var content = string.Join('\n', contentLines);
+        
+        // Удаляем команды LaTeX, но сохраняем их аргументы если они содержат текст
+        // Обрабатываем математические формулы отдельно
+        return content;
+    }
+}
+```
+
+## Обработка ошибок
+
+### 1. LaTeX-специфичные ошибки
+```csharp
+public class LatexParsingException : Exception
+{
+    public int LineNumber { get; }
+    public int ColumnNumber { get; }
+    
+    public LatexParsingException(string message, int lineNumber, int columnNumber) 
+        : base(message)
+    {
+        LineNumber = lineNumber;
+        ColumnNumber = columnNumber;
+    }
+}
+
+public class RuleConfigurationException : Exception
+{
+    public string RuleName { get; }
+    
+    public RuleConfigurationException(string ruleName, string message) 
+        : base(message)
+    {
+        RuleName = ruleName;
+    }
+}
+```
+
+### 2. Graceful Degradation
+- Если одно правило падает, остальные должны продолжать работать
+- Логируй все ошибки парсинга для дальнейшего анализа
+- Предоставляй частичные результаты даже при ошибках
+
+## Performance Guidelines
+
+### 1. Обработка больших документов
+- Используй streaming для очень больших LaTeX файлов
+- Применяй lazy loading для правил проверки
+- Кэшируй результаты парсинга для повторных проверок
+
+### 2. Memory Management
+- Освобождай ресурсы после обработки документов
+- Используй `StringBuilder` для построения больших строк
+- Применяй `IDisposable` паттерн где необходимо
+
+## Тестирование
+
+### 1. Unit Tests для правил
+```csharp
+[TestClass]
+public class QuotationMarksRuleTests
+{
+    [TestMethod]
+    public void Validate_WithForbiddenQuotes_ShouldReturnIssues()
+    {
+        // Arrange
+        var config = new QuotationMarksConfig
+        {
+            PreferredOpen = "«",
+            PreferredClose = "»",
+            Forbidden = new List<string> { "\"", "'" }
+        };
+        var rule = new QuotationMarksRule(config);
+        var document = new LatexDocument 
+        { 
+            Content = "Это \"неправильные\" кавычки." 
+        };
+        
+        // Act
+        var result = rule.Validate(document);
+        
+        // Assert
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(2, result.Issues.Count);
+    }
+}
+```
+
+### 2. Integration Tests
+- Тестируй с реальными LaTeX документами
+- Проверяй производительность на больших файлах
+- Валидируй корректность парсинга сложных LaTeX конструкций
+
+## Документация
+
+### 1. Комментарии в коде
+- Документируй все публичные API
+- Объясняй сложную логику парсинга LaTeX
+- Приводи примеры использования для правил
+
+### 2. README обновления
+- Документируй новые правила проверки
+- Объясняй формат lint-rules.json
+- Приводи примеры конфигурации
+
+**ВСЕГДА ПОМНИ**: Главная цель - корректная проверка LaTeX документов. Любые изменения должны улучшать качество анализа, не нарушая существующую функциональность! 

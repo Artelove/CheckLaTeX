@@ -10,12 +10,45 @@ namespace TexLint.TestFunctionClasses;
 
 public static class TestUtilities
 {
-    public static string PathToCommandsJson = "commands.json";
-    public static string PathToEnvironmentJson = "environments.json";
-    public static string PathToLintRulesJson = "lint-rules.json";
+    private static string? _pathToCommandsJson;
+    private static string? _pathToEnvironmentJson;
+    private static string? _pathToLintRulesJson;
+    
+    public static string PathToCommandsJson => _pathToCommandsJson ??= FindConfigFile("commands.json");
+    public static string PathToEnvironmentJson => _pathToEnvironmentJson ??= FindConfigFile("environments.json");
+    public static string PathToLintRulesJson => _pathToLintRulesJson ??= FindConfigFile("lint-rules.json");
+    
     public static List<Command> FoundsCommands { get; set; }
     public static List<Command> FoundsCommandsWithLstlisting { get; set; }
     public static string StartDirectory { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Ищет конфигурационный файл в различных возможных местах
+    /// </summary>
+    public static string FindConfigFile(string fileName)
+    {
+        // Поиск в различных локациях
+        var searchPaths = new[]
+        {
+            fileName, // Текущая директория
+            Path.Combine("..", fileName), // Родительская директория
+            Path.Combine("..", "..", fileName), // На два уровня выше
+            Path.Combine("..", "..", "..", fileName), // На три уровня выше (для bin/Debug/net6.0)
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName), // Директория приложения
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", fileName), // Корень проекта от bin
+        };
+        
+        foreach (var path in searchPaths)
+        {
+            if (File.Exists(path))
+            {
+                return path;
+            }
+        }
+        
+        // Если не найден, возвращаем путь по умолчанию
+        return Path.Combine("..", "..", "..", fileName);
+    }
     public static List<Command> GetAllCommandsByName(string name)
     {
         var founds = new List<Command>();

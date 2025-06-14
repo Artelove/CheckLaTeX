@@ -4,10 +4,13 @@ using TexLint.TestFunctionClasses;
 
 namespace TexLint.Models;
 
-class HandleInfo
+/// <summary>
+/// Класс для работы с информацией о командах и окружениях LaTeX
+/// Теперь использует DI для получения конфигурации
+/// </summary>
+public class HandleInfo
 {
-    private List<ParseInfo> Commands { get; set; }
-    private List<ParseInfo> Environments { get; set; }
+    private readonly ILatexConfigurationService _configurationService;
 
     public enum ParamsOrder
     {
@@ -15,41 +18,34 @@ class HandleInfo
         Param
     }
 
-    private bool CommandExist = false;
+    public HandleInfo(ILatexConfigurationService configurationService)
+    {
+        _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
+    }
 
     /// <summary>
-    /// Коструктор, заполняющий объекты содержащие конфигурацию команд и окружений из соответствующих Json-файлов
+    /// Получить информацию о парсинге для команды
     /// </summary>
-    /// <param name="jsonCommands">Json в виде строки из файла конфигурации команд</param>
-    /// <param name="jsonEnvironments">Json в виде строки из файла конфигурации окружений</param>
-    public HandleInfo()
-    {
-        Commands = JsonSerializer.Deserialize<List<ParseInfo?>>(new StreamReader(TestUtilities.PathToCommandsJson).ReadToEnd());
-        Environments = JsonSerializer.Deserialize<List<ParseInfo?>>(new StreamReader(TestUtilities.PathToEnvironmentJson).ReadToEnd());
-    }
-
+    /// <param name="command">Команда LaTeX</param>
+    /// <returns>Информация о парсинге или объект с IsCommandExist = false</returns>
     public ParseInfo GetParseInfoByCommand(Command command)
     {
-        foreach (var info in Commands)
-        {
-            if (info.Name == command.Name)
-                return info;
-        }
-
-        return new ParseInfo { IsCommandExist = false };
+        var config = _configurationService.GetCommandConfiguration(command.Name);
+        return config ?? new ParseInfo { IsCommandExist = false };
     }
 
+    /// <summary>
+    /// Получить информацию о парсинге для окружения
+    /// </summary>
+    /// <param name="command">Команда begin с именем окружения в аргументе</param>
+    /// <returns>Информация о парсинге или объект с IsCommandExist = false</returns>
     public ParseInfo GetParseInfoByEnvironments(Command command)
     {
-        foreach (var info in Environments)
-        {
-            if (info.Name == command.Arguments[0].Value)
-                return info;
-        }
+        if (command.Arguments.Count == 0)
+            return new ParseInfo { IsCommandExist = false };
 
-        return new ParseInfo
-        {
-            IsCommandExist = false
-        };
+        var environmentName = command.Arguments[0].Value;
+        var config = _configurationService.GetEnvironmentConfiguration(environmentName);
+        return config ?? new ParseInfo { IsCommandExist = false };
     }
 }

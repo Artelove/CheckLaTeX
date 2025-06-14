@@ -1,0 +1,167 @@
+{
+  "name": "checklatex-extension",
+  "displayName": "CheckLaTeX Extension",
+  "description": "VS Code расширение для анализа LaTeX документов с помощью CheckLaTeX сервера",
+  "version": "1.0.0",
+  "publisher": "checklatex",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other",
+    "Linters"
+  ],
+  "keywords": [
+    "latex",
+    "tex",
+    "lint",
+    "check",
+    "analysis"
+  ],
+  "icon": "media/icon.png",
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "checklatex.analyzeProject",
+        "title": "Analyze LaTeX Project",
+        "category": "CheckLaTeX",
+        "icon": "$(search)"
+      },
+      {
+        "command": "checklatex.analyzeCurrentFile",
+        "title": "Analyze Current LaTeX File",
+        "category": "CheckLaTeX",
+        "icon": "$(file-text)"
+      },
+      {
+        "command": "checklatex.configureServer",
+        "title": "Configure Server",
+        "category": "CheckLaTeX",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "checklatex.clearDiagnostics",
+        "title": "Clear Diagnostics",
+        "category": "CheckLaTeX",
+        "icon": "$(clear-all)"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "checklatex.analyzeProject",
+          "when": "explorerResourceIsFolder",
+          "group": "checklatex"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "checklatex.analyzeCurrentFile",
+          "when": "resourceExtname == .tex",
+          "group": "checklatex"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "checklatex.analyzeCurrentFile",
+          "when": "resourceExtname == .tex",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "checklatex.analyzeProject",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "checklatex.analyzeCurrentFile",
+          "when": "resourceExtname == .tex"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "CheckLaTeX",
+      "properties": {
+        "checklatex.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:5000",
+          "description": "URL сервера CheckLaTeX"
+        },
+        "checklatex.startFile": {
+          "type": "string",
+          "default": "",
+          "description": "Главный .tex файл проекта (если не указан, будет найден автоматически)"
+        },
+        "checklatex.timeout": {
+          "type": "number",
+          "default": 30000,
+          "description": "Таймаут запроса в миллисекундах"
+        },
+        "checklatex.autoAnalyze": {
+          "type": "boolean",
+          "default": false,
+          "description": "Автоматически анализировать при сохранении .tex файлов"
+        },
+        "checklatex.excludePatterns": {
+          "type": "array",
+          "default": [
+            "**/node_modules/**",
+            "**/build/**",
+            "**/dist/**",
+            "**/.git/**"
+          ],
+          "description": "Паттерны файлов и папок для исключения из анализа"
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "checklatexResults",
+          "name": "CheckLaTeX Results",
+          "when": "checklatex.hasResults"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "latex",
+        "extensions": [
+          ".tex",
+          ".latex",
+          ".ltx"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.3",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.2.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "archiver": "^6.0.1",
+    "axios": "^1.6.0",
+    "form-data": "^4.0.0"
+  },
+  "activationEvents": [
+    "onLanguage:latex",
+    "workspaceContains:*.tex"
+  ]
+}

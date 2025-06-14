@@ -1,0 +1,79 @@
+\documentclass[bachelor,
+               substylefile=VolSU.rtx]{disser}
+
+\usepackage[
+  a4paper, mag=1000,
+  left=3.0cm, right=1cm, top=2cm, bottom=2cm, headsep=0.7cm, footskip=1cm
+]{geometry}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx, epsfig}
+\usepackage{enumitem} 
+\usepackage{listings}
+
+\lstdefinelanguage{JavaScript}{
+  morekeywords=[1]{break, continue, delete, else, for, function, if, in,
+    new, return, this, typeof, var, void, while, with},
+  % Literals, primitive types, and reference types.
+  morekeywords=[2]{false, null, true, boolean, number, undefined,
+    Array, Boolean, Date, Math, Number, String, Object},
+  % Built-ins.
+  morekeywords=[3]{eval, parseInt, parseFloat, escape, unescape},
+  sensitive,
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morecomment=[s]{/**}{*/}, % JavaDoc style comments
+  morestring=[b]',
+  morestring=[b]"
+}[keywords, comments, strings]
+\lstset{
+    language=JavaScript,
+    breaklines=true,
+    tabsize=2,
+    numberbychapter=false,
+    columns=fixed,
+    showstringspaces=false,
+    showtabs=false,
+    keepspaces,
+    extendedchars=\true
+}
+\usepackage{caption3}
+\usepackage{float}
+
+\usepackage{color}
+\usepackage[colorlinks=false,linkcolor=blue,breaklinks]{hyperref}
+
+\usepackage[citestyle=gost-numeric,style=gost-numeric,natbib=true,urldate=long, sorting=none,autolang=other]{biblatex}
+\usepackage{csquotes}
+\pagestyle{footcenter}
+\chapterpagestyle{footcenter}
+
+%для борьбы с переполнениями за счет разреженных слов в абзаце
+\emergencystretch=5em
+
+\graphicspath{{fig/}}
+\addbibresource{Bib.bib}
+
+
+\begin{document}
+
+\input{Title.tex}
+
+\renewcommand\contentsname{Содержание}
+\tableofcontents
+
+\input{Intro.tex}
+\input{Chapter1.tex}
+\input{Chapter2.tex}
+\input{Chapter3.tex}
+\input{Conclusions.tex}
+
+\printbibliography[heading=bibintoc]
+
+\input{Progress}
+
+\end{document}

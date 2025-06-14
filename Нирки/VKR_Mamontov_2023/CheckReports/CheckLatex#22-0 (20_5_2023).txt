@@ -1,0 +1,6 @@
+Error --- Библиографический источник  Name:Book Key:Boreskov2010 не нашел ожидаемую команду \cite с ключем Boreskov2010.
+Error --- Библиографический источник  Name:article Key:Jackson2021TheOO не нашел ожидаемую команду \cite с ключем Jackson2021TheOO.
+Error --- Библиографический источник  Name:book Key:CitekeyBook не нашел ожидаемую команду \cite с ключем CitekeyBook.
+Error --- Библиографический источник  Name:inproceedings Key:CitekeyInproceedings не нашел ожидаемую команду \cite с ключем CitekeyInproceedings.
+Error --- Библиографический источник  Name:article Key:CitekeyArticle не нашел ожидаемую команду \cite с ключем CitekeyArticle.
+

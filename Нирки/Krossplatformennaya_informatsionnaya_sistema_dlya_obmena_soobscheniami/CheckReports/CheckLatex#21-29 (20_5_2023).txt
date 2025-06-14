@@ -1,0 +1,100 @@
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:22| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:22| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:24| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:24| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:26| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:26| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:28| Ожидался символ в нижнем регистре в начале текста списка, найден "Р"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:28| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:30| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:30| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:32| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:32| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Intro.tex";String number:34| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:30| Ожидался символ в нижнем регистре в начале текста списка, найден "Е"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:30| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:32| Ожидался символ в нижнем регистре в начале текста списка, найден "Р"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:38| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:38| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:40| Ожидался символ в нижнем регистре в начале текста списка, найден "Д"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:40| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:42| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:42| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:44| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:44| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:46| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:46| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:48| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:48| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:50| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:60| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:62| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:64| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:66| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:68| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:70| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:72| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:82| Ожидался символ в нижнем регистре в начале текста списка, найден "У"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:91| Ожидался символ в нижнем регистре в начале текста списка, найден "У"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:100| Ожидался символ в нижнем регистре в начале текста списка, найден "У"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:172| Ожидался символ в нижнем регистре в начале текста списка, найден "А"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:172| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:174| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:193| Ожидался символ в нижнем регистре в начале текста списка, найден "У"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:193| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:195| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:195| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:197| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:197| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:199| Ожидался символ в нижнем регистре в начале текста списка, найден "У"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:207| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:207| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:209| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:209| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:211| Ожидался символ в нижнем регистре в начале текста списка, найден "К"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:211| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:213| Ожидался символ в нижнем регистре в начале текста списка, найден "У"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:213| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:215| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:227| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:227| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:229| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:257| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:259| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:273| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:273| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:275| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:373| Ожидался символ в нижнем регистре в начале текста списка, найден "А"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:373| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:375| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:375| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter1.tex";String number:377| Ожидался символ в нижнем регистре в начале текста списка, найден "М"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter2.tex";String number:39| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter2.tex";String number:39| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter2.tex";String number:41| Ожидался символ в нижнем регистре в начале текста списка, найден "Б"
+Warning --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter2.tex";String number:106| Отсутствует пунктуационный переход перед окружением "список" или "перечисление"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:145| Ожидался символ в нижнем регистре в начале текста списка, найден "К"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:145| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:147| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:147| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:149| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:149| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:151| Ожидался символ в нижнем регистре в начале текста списка, найден "Ф"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:151| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:153| Ожидался символ в нижнем регистре в начале текста списка, найден "Т"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:153| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:155| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:155| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:157| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:195| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:195| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:197| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:197| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:199| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:199| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:201| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:201| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:203| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:203| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"Krossplatformennaya_informatsionnaya_sistema_dlya_obmena_soobscheniami\Chapter3.tex";String number:205| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+

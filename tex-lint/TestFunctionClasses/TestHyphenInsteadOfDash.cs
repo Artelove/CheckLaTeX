@@ -9,15 +9,19 @@ namespace TexLint.TestFunctionClasses;
 public class TestHyphenInsteadOfDash : TestFunction
 {
     private readonly char _wrongHyphen;
-  public TestHyphenInsteadOfDash()
+    private readonly ILatexConfigurationService _configurationService;
+
+    public TestHyphenInsteadOfDash(ILatexConfigurationService configurationService)
     {
-        var commands = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToCommandsJson).ReadToEnd());
-        var environments = JsonSerializer.Deserialize<List<ParseInfo>>(new StreamReader(TestUtilities.PathToEnvironmentJson).ReadToEnd());
-        var rules = JsonSerializer.Deserialize<LintRules>(new StreamReader(TestUtilities.PathToLintRulesJson).ReadToEnd());
+        _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
+        
+        var rulesJson = File.ReadAllText(TestUtilities.FindConfigFile("lint-rules.json"));
+        var rules = JsonSerializer.Deserialize<LintRules>(rulesJson);
+        
         _wrongHyphen = string.IsNullOrEmpty(rules?.Hyphen.WrongSymbol) ? '-' : rules.Hyphen.WrongSymbol[0];
 
         List<string> commandsNamesWherePhraseArgOrParam = new();
-        foreach (var command in commands)
+        foreach (var command in _configurationService.Commands)
         {
             if (command?.Arg.ParseType == ParameterParseType.Phrase ||
                 command?.Param.ParseType == ParameterParseType.Phrase)
@@ -36,33 +40,81 @@ public class TestHyphenInsteadOfDash : TestFunction
 
         foreach (var command in commandsWherePhraseArgOrParam)
         {
-            foreach (var count in command.Arguments.Select(argument => FindMistakeHyphenInText(argument.Text ?? string.Empty) +
-                                                                       FindMistakeHyphenInText(argument.Value ?? string.Empty)))
+            // Обрабатываем аргументы команды
+            foreach (var argument in command.Arguments)
             {
-                for (var i = 0; i < count; i++)
+                var argText = argument.Text ?? string.Empty;
+                var argValue = argument.Value ?? string.Empty;
+                
+                // Ищем ошибки в тексте аргумента
+                var textErrors = FindHyphenErrors(argText, command.FileOwner, command.StringNumber);
+                foreach (var error in textErrors)
                 {
-                    Errors.Add(new TestError()
-                    {
-                        ErrorCommand = command,
-                        ErrorType = ErrorType.Warning,
-                        ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в аргументе команды:\n" +
-                                    $"{command}"
-                    });
+                    Errors.Add(TestError.CreateWithDiagnostics(
+                        ErrorType.Warning,
+                        "Обнаружено использование дефиса вместо тире в аргументе команды",
+                        error.FileName ?? command.FileOwner,
+                        error.LineNumber ?? command.StringNumber,
+                        error.ColumnNumber ?? 1,
+                        error.OriginalText ?? argText,
+                        suggestedFix: error.SuggestedFix,
+                        errorCommand: command
+                    ));
+                }
+                
+                // Ищем ошибки в значении аргумента
+                var valueErrors = FindHyphenErrors(argValue, command.FileOwner, command.StringNumber);
+                foreach (var error in valueErrors)
+                {
+                    Errors.Add(TestError.CreateWithDiagnostics(
+                        ErrorType.Warning,
+                        "Обнаружено использование дефиса вместо тире в аргументе команды",
+                        error.FileName ?? command.FileOwner,
+                        error.LineNumber ?? command.StringNumber,
+                        error.ColumnNumber ?? 1,
+                        error.OriginalText ?? argValue,
+                        suggestedFix: error.SuggestedFix,
+                        errorCommand: command
+                    ));
                 }
             }
 
-            foreach (var count in command.Parameters.Select(parameter => FindMistakeHyphenInText(parameter?.Text ?? string.Empty) +
-                                                                         FindMistakeHyphenInText(parameter?.Value ?? string.Empty)))
+            // Обрабатываем параметры команды  
+            foreach (var parameter in command.Parameters)
             {
-                for (var i = 0; i < count; i++)
+                var paramText = parameter?.Text ?? string.Empty;
+                var paramValue = parameter?.Value ?? string.Empty;
+                
+                // Ищем ошибки в тексте параметра
+                var textErrors = FindHyphenErrors(paramText, command.FileOwner, command.StringNumber);
+                foreach (var error in textErrors)
                 {
-                    Errors.Add(new TestError()
-                    {
-                        ErrorCommand = command,
-                        ErrorType = ErrorType.Warning,
-                        ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в параметре команды:\n" +
-                                    $"{command}"
-                    });
+                    Errors.Add(TestError.CreateWithDiagnostics(
+                        ErrorType.Warning,
+                        "Обнаружено использование дефиса вместо тире в параметре команды",
+                        error.FileName ?? command.FileOwner,
+                        error.LineNumber ?? command.StringNumber,
+                        error.ColumnNumber ?? 1,
+                        error.OriginalText ?? paramText,
+                        suggestedFix: error.SuggestedFix,
+                        errorCommand: command
+                    ));
+                }
+                
+                // Ищем ошибки в значении параметра
+                var valueErrors = FindHyphenErrors(paramValue, command.FileOwner, command.StringNumber);
+                foreach (var error in valueErrors)
+                {
+                    Errors.Add(TestError.CreateWithDiagnostics(
+                        ErrorType.Warning,
+                        "Обнаружено использование дефиса вместо тире в параметре команды",
+                        error.FileName ?? command.FileOwner,
+                        error.LineNumber ?? command.StringNumber,
+                        error.ColumnNumber ?? 1,
+                        error.OriginalText ?? paramValue,
+                        suggestedFix: error.SuggestedFix,
+                        errorCommand: command
+                    ));
                 }
             }
         }
@@ -143,40 +195,97 @@ public class TestHyphenInsteadOfDash : TestFunction
                 continue;
             
             var textCommand = (TextCommand)command;
-            var number = FindMistakeHyphenInText(textCommand?.Text ?? string.Empty);
-            if (number != 0)
+            var text = textCommand?.Text ?? string.Empty;
+            var errors = FindHyphenErrors(text, textCommand.FileOwner, textCommand.StringNumber);
+            
+            foreach (var error in errors)
             {
-                Errors.Add(new TestError()
-                    {
-                        ErrorCommand = textCommand,
-                        ErrorType = ErrorType.Warning,
-                        ErrorInfo = $"Обнаружено использования дефиса вместо тиреобразного символа в тексте:\n" +
-                                    $"{TestUtilities.GetContentAreaFromFindSymbol(textCommand, number)}"
-                    });
+                Errors.Add(TestError.CreateWithDiagnostics(
+                    ErrorType.Warning,
+                    "Обнаружено использование дефиса вместо тире в тексте",
+                    error.FileName ?? textCommand.FileOwner,
+                    error.LineNumber ?? textCommand.StringNumber,
+                    error.ColumnNumber ?? 1,
+                    error.OriginalText ?? text,
+                    suggestedFix: error.SuggestedFix,
+                    errorCommand: textCommand
+                ));
             }
         }
     }
 
-    private int FindMistakeHyphenInText(string text)
+    /// <summary>
+    /// Находит позиции неправильного использования дефиса вместо тире
+    /// </summary>
+    /// <param name="text">Текст для анализа</param>
+    /// <param name="fileName">Имя файла</param>
+    /// <param name="baseLineNumber">Базовый номер строки</param>
+    /// <returns>Список ошибок с диагностической информацией</returns>
+    private List<TestError> FindHyphenErrors(string text, string fileName, int baseLineNumber)
     {
-        for (var i = 0; i < text.Length; i++)
+        var errors = new List<TestError>();
+        
+        if (string.IsNullOrEmpty(text))
+            return errors;
+
+        var lines = text.Split('\n');
+        
+        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
         {
-            if (text[i] != _wrongHyphen)
-                continue;
+            var line = lines[lineIndex];
             
-            bool left = true;
-            bool right = true;
-            
-            if(i - 1 >= 0)
-                left = Char.IsWhiteSpace(text[i - 1]);
-            
-            if (i + 1 < text.Length)
-                right = Char.IsWhiteSpace(text[i + 1]);
-            
-            if(left && right)
-                return i;
+            for (int charIndex = 0; charIndex < line.Length; charIndex++)
+            {
+                if (line[charIndex] != _wrongHyphen)
+                    continue;
+                
+                bool left = true;
+                bool right = true;
+                
+                // Проверяем, что слева и справа от символа есть пробелы (тире должно быть окружено пробелами)
+                if (charIndex - 1 >= 0)
+                    left = char.IsWhiteSpace(line[charIndex - 1]);
+                
+                if (charIndex + 1 < line.Length)
+                    right = char.IsWhiteSpace(line[charIndex + 1]);
+                
+                if (left && right)
+                {
+                    // Создаем контекст ошибки
+                    var contextStart = Math.Max(0, charIndex - 10);
+                    var contextEnd = Math.Min(line.Length, charIndex + 10);
+                    var context = line.Substring(contextStart, contextEnd - contextStart);
+                    
+                    // Создаем предлагаемое исправление
+                    var suggestedFix = line.Replace(_wrongHyphen.ToString(), "---"); // Заменяем на тире LaTeX
+                    
+                    var error = new TestError
+                    {
+                        ErrorType = ErrorType.Warning,
+                        FileName = fileName,
+                        LineNumber = baseLineNumber + lineIndex,
+                        ColumnNumber = charIndex + 1, // 1-based
+                        EndLineNumber = baseLineNumber + lineIndex,
+                        EndColumnNumber = charIndex + 2, // После символа
+                        OriginalText = context,
+                        SuggestedFix = suggestedFix
+                    };
+                    error.ErrorInfo = $"Дефис '{_wrongHyphen}' должен быть заменен на тире в позиции {charIndex + 1}";
+                    errors.Add(error);
+                }
+            }
         }
 
-        return 0;
+        return errors;
+    }
+
+    /// <summary>
+    /// Устаревший метод для обратной совместимости
+    /// </summary>
+    [Obsolete("Используйте FindHyphenErrors для получения точных позиций")]
+    private int FindMistakeHyphenInText(string text)
+    {
+        var errors = FindHyphenErrors(text, "", 1);
+        return errors.Count > 0 ? errors[0].ColumnNumber ?? 0 : 0;
     }
 }

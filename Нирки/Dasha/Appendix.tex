@@ -1,0 +1,157 @@
+\chapter{Листинг разработанной программы для построения матриц с использованием методов интерполяции: обратно взвешенных значений, сплайнами, радиально-базисной функцией}
+
+
+\begin{lstlisting}[caption={Метод интерполяции сплайном}, label={ls:a:01}]
+static double[,] calculate_spline()
+        {
+            double[,] grid = new double[N, M];
+            double[,] a = new double[Number_points + 3, Number_points + 3];
+            double[,] a1 = new double[Number_points + 3, Number_points + 3];
+            double[] b = new double[Number_points + 3];
+            double[] x = new double[Number_points + 3];
+            Console.WriteLine(Number_points);
+            for (int i=0; i < Number_points + 3; i++)
+            {
+                x[i] = 0;
+                if (i < Number_points)
+                {
+                    b[i] = _Z[i];
+                }
+                else
+                {
+                    b[i] = 0;
+                }
+
+                for (int j=0; j < Number_points + 3; j++)
+                {
+                    a1[i,j] = 0;
+                }
+            }
+
+            for (int i=0; i < Number_points + 3; i++)
+            {
+                for (int j=0; j < Number_points + 3; j++)
+                {
+                    if(i < Number_points)
+                    {
+                        if (j < Number_points)
+                        {
+                            if (i!=j)
+                            {
+                                a[i, j] = ((_X[i] - _X[j]) * (_X[i] - _X[j]) + (_Y[i] - _Y[j]) * (_Y[i] - _Y[j]))
+                                    * Math.Log((_X[i] - _X[j]) * (_X[i] - _X[j]) + (_Y[i] - _Y[j]) * (_Y[i] - _Y[j]));
+                            }
+                            else
+                            {
+                                a[i, j] = 0;
+                            }
+                        }
+                        else
+                        {
+                            a[i, Number_points] = _X[i];
+                            a[i, Number_points + 1] = _Y[i];
+                            a[i, Number_points + 2] = 1;
+                        }
+                    }
+                    else
+                    {
+                        if (j < Number_points)
+                        {
+                            a[Number_points, j] = 1;
+                            a[Number_points + 1, j] = _X[j];
+                            a[Number_points + 2, j] = _Y[j];
+                        }
+                        else
+                        {
+                            a[i, Number_points] = 0;
+                            a[i, Number_points + 1] = 0;
+                            a[i, Number_points + 2] = 0;
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < Number_points + 3; i++)
+            {
+                for (int j = 0; j < Number_points + 3; j++)
+                {
+                    Console.Write(Convert.ToString(a[i, j]) + " ");
+                }
+                Console.WriteLine();
+            }
+
+            Gauss(a, a1, b, x, Number_points + 3);
+            for (int i = 0; i < Number_points + 3; i++)
+            {
+                Console.WriteLine(x[i]);
+            }
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < M; j++)
+                {
+                    grid[i, j] = Spline(x,i,j);
+                }
+            }
+
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < M; j++)
+                {
+                    if (MATRIX[i, j] != 0)
+                    {
+                        grid[i, j] = MATRIX[i, j];
+                    }
+                }
+            }
+            return grid;
+        }
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Метод интерполяции с помощью радиально-базисной функции}, label={ls:a:02}]
+ static double[,] calculate_RBF()
+        {
+            double[,] grid = new double[N, M];
+            double[,] a = new double[Number_points, Number_points];
+            double[,] a1 = new double[Number_points, Number_points];
+            double[] b = new double[Number_points];
+            double[] x = new double[Number_points];
+
+            for (int i = 0; i < Number_points; i++)
+            {
+                x[i] = 0;
+                b[i] = _Z[i];
+                for (int j = 0; j < Number_points; j++)
+                {
+                    a1[i, j] = 0;
+                    if (i == j)
+                    {
+                        a[i, j] = 1;
+                    }
+                    else
+                    {
+                        a[i, j] = EvklidBasis(_X[j], _Y[j], _X[i], _Y[i]);
+                    }
+                }
+            }
+            Gauss(a, a1, b, x, Number_points);
+        
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < M; j++)
+                {
+                    grid[i, j] = RBF(x, i, j);
+                }
+            }
+
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < M; j++)
+                {
+                    if (MATRIX[i, j] != 0)
+                    {
+                        grid[i, j] = MATRIX[i, j];
+                    }
+                }
+            }
+            return grid;
+        }
+\end{lstlisting}

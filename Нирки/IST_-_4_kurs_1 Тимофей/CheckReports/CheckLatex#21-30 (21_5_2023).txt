@@ -1,0 +1,26 @@
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Intro.tex";String number:32| Команда \cite[CitekeyArticle] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Intro.tex";String number:32| Команда \cite[Boreskov2010] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:8| Команда \cite[7] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:10| Команда \cite[Kotlin4] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:17| Команда \cite[8] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:21| Команда \cite[book:Jomar] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:23| Команда \cite[kotlin5] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:70| Команда \cite[Kotlin2] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:81| Команда \cite[Jetpack] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:90| Команда \cite[book:Xml1] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:90| Команда \cite[Kotlin3] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter1.tex";String number:110| Команда \cite[book:sqlite2] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:15| Команда \cite[book:25] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:25| Команда \cite[book:prof] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:40| Команда \cite[book:21] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:54| Команда \cite[book:22] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:63| Команда \cite[jetpack1] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:65| Команда \cite[book:23] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:74| Команда \cite[book:24] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:90| Команда \cite[clean] не нашла ссылаемого источника.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter2.tex";String number:106| Команда \cite[CleanArch] не нашла ссылаемого источника.
+Error --- Библиографический источник  Name:book Key:book:NOTUSEDSTILL не нашел ожидаемую команду \cite с ключем book:NOTUSEDSTILL.
+Error --- Библиографический источник  Name:book Key:book:Apprentice не нашел ожидаемую команду \cite с ключем book:Apprentice.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Chapter3.tex";String number:1| Окружение с названием \label[Bib_chapter] не имеет ссылки в документе.
+Error --- 	|File:"IST_-_4_kurs_1 Тимофей\Appendix.tex";String number:3| Окружение с названием \label[ls:a:01] не имеет ссылки в документе.
+

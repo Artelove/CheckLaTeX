@@ -1,0 +1,31 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {russian}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\cyrillictext \CYRV \cyrv \cyre \cyrd \cyre \cyrn \cyri \cyre }{3}{chapter*.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~1.\hskip 1em \IeC {\CYRS }\IeC {\cyrt }\IeC {\cyrr }\IeC {\cyru }\IeC {\cyrk }\IeC {\cyrt }\IeC {\cyru }\IeC {\cyrr }\IeC {\cyra } \IeC {\cyrsh }\IeC {\cyra }\IeC {\cyrb }\IeC {\cyrl }\IeC {\cyro }\IeC {\cyrn }\IeC {\cyra }}{4}{chapter.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.1\hskip 1em}\IeC {\CYRS }\IeC {\cyre }\IeC {\cyrk }\IeC {\cyrc }\IeC {\cyri }\IeC {\cyro }\IeC {\cyrn }\IeC {\cyri }\IeC {\cyrr }\IeC {\cyro }\IeC {\cyrv }\IeC {\cyra }\IeC {\cyrn }\IeC {\cyri }\IeC {\cyre }: \IeC {\CYRG }\IeC {\cyrl }\IeC {\cyra }\IeC {\cyrv }\IeC {\cyrery }, \IeC {\cyrp }\IeC {\cyra }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrg }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrf }\IeC {\cyrery } \IeC {\cyri } \IeC {\cyrp }\IeC {\cyru }\IeC {\cyrn }\IeC {\cyrk }\IeC {\cyrt }\IeC {\cyrery }}{6}{section.1.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.2\hskip 1em}\IeC {\CYRP }\IeC {\cyrr }\IeC {\cyri }\IeC {\cyrm }\IeC {\cyre }\IeC {\cyrr } \IeC {\cyrp }\IeC {\cyra }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrg }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrf }\IeC {\cyra }}{6}{section.1.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.2.1\hskip 1em}\IeC {\CYRP }\IeC {\cyrr }\IeC {\cyri }\IeC {\cyrm }\IeC {\cyre }\IeC {\cyrr } \IeC {\cyrp }\IeC {\cyru }\IeC {\cyrn }\IeC {\cyrk }\IeC {\cyrt }\IeC {\cyra }}{6}{subsection.1.2.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~2.\hskip 1em \IeC {\CYREREV }\IeC {\cyrl }\IeC {\cyre }\IeC {\cyrm }\IeC {\cyre }\IeC {\cyrn }\IeC {\cyrt }\IeC {\cyrery }, \IeC {\cyrk }\IeC {\cyro }\IeC {\cyrt }\IeC {\cyro }\IeC {\cyrr }\IeC {\cyrery }\IeC {\cyre } \IeC {\cyrm }\IeC {\cyro }\IeC {\cyrg }\IeC {\cyru }\IeC {\cyrt } \IeC {\cyrp }\IeC {\cyrr }\IeC {\cyri }\IeC {\cyrs }\IeC {\cyru }\IeC {\cyrt }\IeC {\cyrs }\IeC {\cyrt }\IeC {\cyrv }\IeC {\cyro }\IeC {\cyrv }\IeC {\cyra }\IeC {\cyrt }\IeC {\cyrsftsn } \IeC {\cyrv } \IeC {\cyrt }\IeC {\cyre }\IeC {\cyrk }\IeC {\cyrs }\IeC {\cyrt }\IeC {\cyre }}{8}{chapter.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.1\hskip 1em}\IeC {\CYRF }\IeC {\cyro }\IeC {\cyrr }\IeC {\cyrm }\IeC {\cyru }\IeC {\cyrl }\IeC {\cyrery }}{8}{section.2.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.2\hskip 1em}\IeC {\CYRR }\IeC {\cyri }\IeC {\cyrs }\IeC {\cyru }\IeC {\cyrn }\IeC {\cyrk }\IeC {\cyri }}{9}{section.2.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.3\hskip 1em}\IeC {\CYRT }\IeC {\cyra }\IeC {\cyrb }\IeC {\cyrl }\IeC {\cyri }\IeC {\cyrc }\IeC {\cyrery }}{11}{section.2.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.4\hskip 1em}\IeC {\CYRL }\IeC {\cyri }\IeC {\cyrs }\IeC {\cyrt }\IeC {\cyri }\IeC {\cyrn }\IeC {\cyrg }\IeC {\cyri } \IeC {\cyrp }\IeC {\cyrr }\IeC {\cyro }\IeC {\cyrg }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrm }\IeC {\cyrm }}{11}{section.2.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~3.\hskip 1em \IeC {\CYRO }\IeC {\cyrf }\IeC {\cyro }\IeC {\cyrr }\IeC {\cyrm }\IeC {\cyrl }\IeC {\cyre }\IeC {\cyrn }\IeC {\cyri }\IeC {\cyre } \IeC {\cyrb }\IeC {\cyri }\IeC {\cyrb }\IeC {\cyrl }\IeC {\cyri }\IeC {\cyro }\IeC {\cyrg }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrf }\IeC {\cyri }\IeC {\cyri }}{13}{chapter.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\cyrillictext \CYRZ \cyra \cyrk \cyrl \cyryu \cyrch \cyre \cyrn \cyri \cyre }{16}{table.caption.7}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\appendixname ~\CYRA .\hskip 1em \IeC {\CYRL }\IeC {\cyri }\IeC {\cyrs }\IeC {\cyrt }\IeC {\cyri }\IeC {\cyrn }\IeC {\cyrg } \IeC {\cyrr }\IeC {\cyra }\IeC {\cyrz }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrb }\IeC {\cyro }\IeC {\cyrt }\IeC {\cyra }\IeC {\cyrn }\IeC {\cyrn }\IeC {\cyro }\IeC {\cyrishrt } \IeC {\cyrp }\IeC {\cyrr }\IeC {\cyro }\IeC {\cyrg }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrm }\IeC {\cyrm }\IeC {\cyrery }}{18}{appendix.A}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\IeC {\CYRH }\IeC {\cyro }\IeC {\cyrd } \IeC {\cyrv }\IeC {\cyrery }\IeC {\cyrp }\IeC {\cyro }\IeC {\cyrl }\IeC {\cyrn }\IeC {\cyre }\IeC {\cyrn }\IeC {\cyri }\IeC {\cyrya } \IeC {\cyrp }\IeC {\cyrr }\IeC {\cyra }\IeC {\cyrk }\IeC {\cyrt }\IeC {\cyri }\IeC {\cyrk }\IeC {\cyri }}{21}{appendix*.9}

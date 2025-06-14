@@ -1,0 +1,42 @@
+\chapter{Исходный код разработанной программы}
+
+\begin{lstlisting}[caption={Листинг программы разработанной на MathLab}, label={ls:a:01}]
+#include <iostream>
+using namespace std;
+int main()
+{
+       setlocale( LC_ALL,"Russian" );
+        double omega, k;
+        double T, A, phi0, x;
+        const double g = 9.78;
+        const double PI = 3.1415;
+       cout << "Input periodicity: ";
+       cin >> omega;
+      if(!omega) // control
+    {
+        cout<<"ERROR\n";
+        system("pause");
+        return 1;
+    }
+ 
+       cout << "Input amplituda: ";
+       cin >> A;
+       cout << "Input k: ";
+       cin >> k;
+    if(!k) // control
+    {
+        cout<<"ERROR\n";
+        system("pause");
+        return 1;
+    }
+phi0 = asin(1/k);
+T= abs((PI/2) - phi0)/omega;
+x = A*sin ((omega*T ) + phi0 );
+cout << "phi0 =  "<<phi0<<"\n ";
+cout << "T =  "<<T<<"\n ";
+cout << "x =  "<<x<<"\n ";
+ 
+ system("pause");
+        return 0;
+}
+\end{lstlisting}

@@ -1,0 +1,23 @@
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Intro.tex";String number:14| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Intro.tex";String number:14| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Intro.tex";String number:16| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Intro.tex";String number:16| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Intro.tex";String number:18| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter1.tex";String number:39| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter1.tex";String number:39| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter1.tex";String number:41| Ожидался символ в нижнем регистре в начале текста списка, найден "Б"
+Warning --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter1.tex";String number:106| Отсутствует пунктуационный переход перед окружением "список" или "перечисление"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:145| Ожидался символ в нижнем регистре в начале текста списка, найден "К"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:145| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:147| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:147| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:149| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:149| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:151| Ожидался символ в нижнем регистре в начале текста списка, найден "Ф"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:151| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:153| Ожидался символ в нижнем регистре в начале текста списка, найден "Т"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:153| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:155| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:155| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Sozdanie_veb-prilozheniy_rabotayuschikh_v_rezhime_realnogo_vremeni\Chapter2.tex";String number:157| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+

@@ -1,0 +1,144 @@
+Error --- Библиографический источник  Name:book Key:devinfsystem не нашел ожидаемую команду \cite с ключем devinfsystem.
+Error --- Библиографический источник  Name:book Key:methdoinfsystem не нашел ожидаемую команду \cite с ключем methdoinfsystem.
+Error --- Библиографический источник  Name:book Key:infsystem не нашел ожидаемую команду \cite с ключем infsystem.
+Error --- Библиографический источник  Name:book Key:exploitinfsystem не нашел ожидаемую команду \cite с ключем exploitinfsystem.
+Error --- Библиографический источник  Name:book Key:highinfsystem не нашел ожидаемую команду \cite с ключем highinfsystem.
+Error --- Библиографический источник  Name:book Key:designinfsystems не нашел ожидаемую команду \cite с ключем designinfsystems.
+Error --- Библиографический источник  Name:inproceedings Key:mvcpattern не нашел ожидаемую команду \cite с ключем mvcpattern.
+Error --- Библиографический источник  Name:article Key:spa не нашел ожидаемую команду \cite с ключем spa.
+Error --- Библиографический источник  Name:article Key:jwt не нашел ожидаемую команду \cite с ключем jwt.
+Error --- Библиографический источник  Name:article Key:vuejsrouter не нашел ожидаемую команду \cite с ключем vuejsrouter.
+Error --- Библиографический источник  Name:inproceedings Key:microservice не нашел ожидаемую команду \cite с ключем microservice.
+Error --- Библиографический источник  Name:article Key:monolith не нашел ожидаемую команду \cite с ключем monolith.
+Error --- Библиографический источник  Name:article Key:vuex не нашел ожидаемую команду \cite с ключем vuex.
+Error --- Библиографический источник  Name:Book Key:gost34 не нашел ожидаемую команду \cite с ключем gost34.
+Error --- Библиографический источник  Name:Book Key:priemspo не нашел ожидаемую команду \cite с ключем priemspo.
+Error --- Библиографический источник  Name:Book Key:priembachelor не нашел ожидаемую команду \cite с ключем priembachelor.
+Error --- Библиографический источник  Name:inbook Key:webapacrch не нашел ожидаемую команду \cite с ключем webapacrch.
+Error --- Библиографический источник  Name:inbook Key:vuelayout не нашел ожидаемую команду \cite с ключем vuelayout.
+Error --- Библиографический источник  Name:inbook Key:vuemainjs не нашел ожидаемую команду \cite с ключем vuemainjs.
+Error --- Библиографический источник  Name:inbook Key:algoritm не нашел ожидаемую команду \cite с ключем algoritm.
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter3.tex";String number:238| Название окружения \label[ls:oracle] уже использовалось ранее 
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Intro.tex";String number:13| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Intro.tex";String number:13| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Intro.tex";String number:15| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Intro.tex";String number:15| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Intro.tex";String number:17| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:10| Ожидался символ в нижнем регистре в начале текста списка, найден "Т"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:10| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:12| Ожидался символ в нижнем регистре в начале текста списка, найден "К"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:12| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:14| Ожидался символ в нижнем регистре в начале текста списка, найден "Т"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:14| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:16| Ожидался символ в нижнем регистре в начале текста списка, найден "М"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:26| Ожидался символ в нижнем регистре в начале текста списка, найден "Р"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:26| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:28| Ожидался символ в нижнем регистре в начале текста списка, найден "Д"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:28| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:30| Ожидался символ в нижнем регистре в начале текста списка, найден "Д"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:30| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:32| Ожидался символ в нижнем регистре в начале текста списка, найден "Н"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:46| Ожидался символ в нижнем регистре в начале текста списка, найден "Э"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:46| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:48| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:48| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:50| Ожидался символ в нижнем регистре в начале текста списка, найден "Н"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:60| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:60| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:62| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:62| Ожидался символ окончания элемента листа: [;], найден .
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:64| Ожидался алфавитный символ в начале текста, найден «
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:64| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:66| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:66| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:68| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:68| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:70| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:70| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:72| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:72| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:74| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:74| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:76| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:76| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:78| Ожидался символ в нижнем регистре в начале текста списка, найден "Д"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:84| Ожидался символ в нижнем регистре в начале текста списка, найден "Н"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:84| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:86| Ожидался символ в нижнем регистре в начале текста списка, найден "Д"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:86| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:88| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:94| Ожидался символ в нижнем регистре в начале текста списка, найден "Д"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:94| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:96| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:106| Ожидался символ в нижнем регистре в начале текста списка, найден "К"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:106| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:108| Ожидался символ в нижнем регистре в начале текста списка, найден "У"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:108| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:110| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:110| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:112| Ожидался символ в нижнем регистре в начале текста списка, найден "Е"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:157| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:157| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:159| Ожидался символ в нижнем регистре в начале текста списка, найден "О"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:159| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:161| Ожидался символ в нижнем регистре в начале текста списка, найден "К"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:173| Ожидался символ в нижнем регистре в начале текста списка, найден "P"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:173| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:175| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:175| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:177| Ожидался символ в нижнем регистре в начале текста списка, найден "Т"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:177| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:179| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:179| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:181| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:181| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:183| Ожидался символ в нижнем регистре в начале текста списка, найден "А"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:199| Ожидался символ в нижнем регистре в начале текста списка, найден "L"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:199| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:201| Ожидался символ в нижнем регистре в начале текста списка, найден "S"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:201| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:203| Ожидался символ в нижнем регистре в начале текста списка, найден "V"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:203| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:205| Ожидался символ в нижнем регистре в начале текста списка, найден "B"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:205| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter1.tex";String number:207| Ожидался символ в нижнем регистре в начале текста списка, найден "S"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:10| Ожидался символ в нижнем регистре в начале текста списка, найден "А"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:10| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:12| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:12| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:14| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:24| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:26| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:28| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:30| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:32| Ожидался текст после команды \item
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:50| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:50| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:52| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:52| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:54| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:54| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:56| Ожидался символ в нижнем регистре в начале текста списка, найден "В"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:56| Ожидался символ окончания элемента листа: [;], найден .
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:58| Ожидался символ в нижнем регистре в начале текста списка, найден "И"
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:73| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:75| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:77| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:79| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:81| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:83| Ожидался текст после команды \item
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:85| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:85| Ожидался символ окончания элемента листа: [;], найден .
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:87| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:97| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:99| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:101| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:103| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:105| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:107| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:109| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:111| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:113| Ожидался текст после команды \item
+Warning --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:115| Ожидался текст после команды \item
+Error --- 	|File:"NIR_Blokcheyn_v_razrabotke_raspredelennykh_sistem\Chapter2.tex";String number:117| Ожидался символ в нижнем регистре в начале текста списка, найден "П"
+

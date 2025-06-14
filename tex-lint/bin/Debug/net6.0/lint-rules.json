@@ -1,0 +1,11 @@
+{
+  "QuotationMarks": {
+    "PreferredOpen": "«",
+    "PreferredClose": "»",
+    "Forbidden": ["\"", "'"]
+  },
+  "Hyphen": {
+    "WrongSymbol": "-",
+    "Replacement": "—"
+  }
+}

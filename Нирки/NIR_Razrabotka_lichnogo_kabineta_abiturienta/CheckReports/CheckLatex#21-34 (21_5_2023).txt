@@ -1,0 +1,23 @@
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:212| Ожидался символ в нижнем регистре в начале текста списка, найден "С"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:344| Ожидался символ в верхнем регистре в начале текста списка, найден "р"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:344| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:345| Ожидался символ в верхнем регистре в начале текста списка, найден "п"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:345| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:346| Ожидался символ в верхнем регистре в начале текста списка, найден "р"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:353| Ожидался символ в верхнем регистре в начале текста списка, найден "р"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:353| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:354| Ожидался символ в верхнем регистре в начале текста списка, найден "р"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:354| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:355| Ожидался символ в верхнем регистре в начале текста списка, найден "р"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:355| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:356| Ожидался символ в верхнем регистре в начале текста списка, найден "р"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:363| Ожидался символ в верхнем регистре в начале текста списка, найден "п"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:363| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:364| Ожидался символ в верхнем регистре в начале текста списка, найден "п"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:364| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:365| Ожидался символ в верхнем регистре в начале текста списка, найден "п"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:377| Ожидался символ в верхнем регистре в начале текста списка, найден "э"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:377| Ожидался символ окончания элемента листа: [.?!], найден ;
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:378| Ожидался символ в верхнем регистре в начале текста списка, найден "д"
+Error --- 	|File:"NIR_Razrabotka_lichnogo_kabineta_abiturienta\Chapter1.tex";String number:457| Ожидался символ в нижнем регистре в начале текста списка, найден "Г"
+

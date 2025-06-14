@@ -1,0 +1,38 @@
+# Compiled output
+out/
+*.js
+*.js.map
+*.d.ts
+
+# Node modules
+node_modules/
+
+# VS Code extension package
+*.vsix
+
+# Test files
+.vscode-test/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Coverage
+coverage/
+
+# Build artifacts
+dist/
+build/ 

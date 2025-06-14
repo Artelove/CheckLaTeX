@@ -23,7 +23,7 @@ class CommandHandler
     public string StartFile;
     public string StartDirectory;
 
-    public CommandHandler(string startFile, string startDirectory)
+    public CommandHandler(string startFile, string startDirectory, ILatexConfigurationService configurationService)
     {
         _regexCommandName = new(PATTERN_COMMAND_NAME);
         _regexParam = new(PATTERN_PARAMETER);
@@ -31,7 +31,7 @@ class CommandHandler
         _regexEndString = new(PATTERN_END_OF_STRING);
         StartFile = startFile;
         StartDirectory = startDirectory;
-        _handleInfo = new HandleInfo();
+        _handleInfo = new HandleInfo(configurationService);
     }
 
     /// <summary>
@@ -305,7 +305,9 @@ class CommandHandler
                     
                     //Поиск команды завершения окружения и проверка на соответствие названию begin и end 
                     if (currentCommand.Name == "end" &&
-                        currentCommand?.Arguments[0].Value == environmentCommand.EnvironmentName)
+                        currentCommand?.Arguments != null &&
+                        currentCommand.Arguments.Count > 0 &&
+                        currentCommand.Arguments[0].Value == environmentCommand.EnvironmentName)
                     {
                         environmentCommand.EndCommand = currentCommand;
                         return ch;
@@ -361,8 +363,10 @@ class CommandHandler
     {
         ParseInfo parseInfo;
 
-        if (command.Name == "begin") parseInfo = _handleInfo.GetParseInfoByEnvironments(command);
-        else parseInfo = _handleInfo.GetParseInfoByCommand(command);
+        if (command.Name == "begin") 
+            parseInfo = _handleInfo.GetParseInfoByEnvironments(command);
+        else 
+            parseInfo = _handleInfo.GetParseInfoByCommand(command);
 
         var startCh = startSymbol;
         var endSymbol = startSymbol;
@@ -620,5 +624,27 @@ class CommandHandler
         ReadValue = 2,
         ReadPhrase = 3,
         ReadPhraseValue = 4
+    }
+    
+    /// <summary>
+    /// Получает контекст LaTeX текста вокруг указанной позиции для отладки
+    /// </summary>
+    /// <param name="text">Полный текст</param>
+    /// <param name="position">Позиция ошибки</param>
+    /// <param name="contextLength">Длина контекста в символах с каждой стороны</param>
+    /// <returns>Контекстная строка с выделением позиции ошибки</returns>
+    private string GetLatexContext(string text, int position, int contextLength = 50)
+    {
+        if (string.IsNullOrEmpty(text) || position < 0 || position >= text.Length)
+            return "Контекст недоступен";
+            
+        var start = Math.Max(0, position - contextLength);
+        var end = Math.Min(text.Length, position + contextLength);
+        
+        var before = text.Substring(start, position - start);
+        var current = position < text.Length ? text[position].ToString() : "";
+        var after = text.Substring(position + current.Length, end - position - current.Length);
+        
+        return $"{before}【{current}】{after}";
     }
 }
