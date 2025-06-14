@@ -35,6 +35,57 @@ class CommandHandler
     }
 
     /// <summary>
+    /// Вычисляет номер строки и столбца для заданной позиции в тексте
+    /// </summary>
+    /// <param name="text">Исходный текст</param>
+    /// <param name="position">Позиция в тексте</param>
+    /// <returns>Кортеж (номер строки, номер столбца) - оба 1-based</returns>
+    private (int line, int column) GetLineAndColumn(string text, int position)
+    {
+        if (position < 0 || position >= text.Length)
+            return (1, 1);
+
+        int line = 1;
+        int column = 1;
+
+        for (int i = 0; i < position; i++)
+        {
+            if (text[i] == '\n')
+            {
+                line++;
+                column = 1;
+            }
+            else
+            {
+                column++;
+            }
+        }
+
+        return (line, column);
+    }
+
+    /// <summary>
+    /// Заполняет позиционную информацию для команды
+    /// </summary>
+    /// <param name="command">Команда для заполнения</param>
+    /// <param name="text">Исходный текст</param>
+    /// <param name="startPos">Начальная позиция</param>
+    /// <param name="endPos">Конечная позиция</param>
+    private void FillSourcePositions(Command command, string text, int startPos, int endPos)
+    {
+        command.SourceStartPosition = startPos;
+        command.SourceEndPosition = endPos;
+        
+        var (startLine, startColumn) = GetLineAndColumn(text, startPos);
+        var (endLine, endColumn) = GetLineAndColumn(text, endPos);
+        
+        command.SourceStartLine = startLine;
+        command.SourceStartColumn = startColumn;
+        command.SourceEndLine = endLine;
+        command.SourceEndColumn = endColumn;
+    }
+
+    /// <summary>
     /// Находит команды в исходном файле, после чего проходится по всем командам для поиске команд \input и \include
     /// <br/>
     /// Происходит поиск команд в файле обозначенном в аргументе команды,
@@ -160,11 +211,17 @@ class CommandHandler
                 {
                     var environmentCommand = new EnvironmentCommand(currentCommand);
                     ch = FillEnvironment(environmentCommand, currentCommand, text, ch, foundCommands);
+                    
+                    // Позиционная информация уже заполнена в FillEnvironment
                 }
                 else
                 {
                     ch += FillCommand(currentCommand, text, ch) - 1;
                     currentCommand.EndSymbolNumber = ch;
+                    
+                    // Заполняем позиционную информацию для команды
+                    FillSourcePositions(currentCommand, text, currentCommand.StartSymbolNumber, ch);
+                    
                     foundCommands.Add(currentCommand);
                 }
 
@@ -190,6 +247,9 @@ class CommandHandler
                     textCommand.GlobalIndex = foundCommands.Count;
                     if (textCommand.Text.Length > 0)
                     {
+                        // Заполняем позиционную информацию для текстовой команды
+                        FillSourcePositions(textCommand, text, textCommand.StartSymbolNumber, ch - 1);
+                        
                         foundCommands.Add(textCommand);
                     }
 
@@ -218,6 +278,9 @@ class CommandHandler
         
         environmentCommand.EnvironmentName = current.Arguments[0].Value;
         environmentCommand.Name = "begin";
+        
+        // Заполняем позиционную информацию для команды окружения
+        FillSourcePositions(environmentCommand, text, environmentCommand.StartSymbolNumber, ch);
         
         founded.Add(environmentCommand);
         ch += FillCommand(environmentCommand, text, ch);
@@ -293,12 +356,19 @@ class CommandHandler
                 {
                     var _environmentCommand = new EnvironmentCommand(environmentCommand);
                     ch = FillEnvironment(_environmentCommand, currentCommand, text, ch, foundCommands);
+                    
+                    // Заполняем позиционную информацию для вложенного окружения
+                    FillSourcePositions(_environmentCommand, text, _environmentCommand.StartSymbolNumber, ch);
+                    
                     environmentCommand.InnerCommands.Add(_environmentCommand);
                 }
                 else
                 {
                     ch += FillCommand(currentCommand, text, ch) - 1;
                     currentCommand.EndSymbolNumber = ch;
+                    
+                    // Заполняем позиционную информацию для команды в окружении
+                    FillSourcePositions(currentCommand, text, currentCommand.StartSymbolNumber, ch);
                     
                     environmentCommand.InnerCommands.Add(currentCommand);
                     foundCommands.Add(currentCommand);
@@ -337,6 +407,9 @@ class CommandHandler
                     environmentCommand.InnerCommands.Add(textCommand);
                     if (textCommand.Text.Length > 0)
                     {
+                        // Заполняем позиционную информацию для текстовой команды в окружении
+                        FillSourcePositions(textCommand, text, textCommand.StartSymbolNumber, ch - 1);
+                        
                         foundCommands.Add(textCommand);
                         //Console.WriteLine("TEXT:" + textCommand.Text);
                     }

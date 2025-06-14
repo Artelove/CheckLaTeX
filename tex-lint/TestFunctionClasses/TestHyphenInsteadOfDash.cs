@@ -47,7 +47,7 @@ public class TestHyphenInsteadOfDash : TestFunction
                 var argValue = argument.Value ?? string.Empty;
                 
                 // Ищем ошибки в тексте аргумента
-                var textErrors = FindHyphenErrors(argText, command.FileOwner, command.StringNumber);
+                var textErrors = FindHyphenErrors(argText, command.FileOwner, command.StringNumber, command);
                 foreach (var error in textErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -57,13 +57,15 @@ public class TestHyphenInsteadOfDash : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? argText,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
                 }
                 
                 // Ищем ошибки в значении аргумента
-                var valueErrors = FindHyphenErrors(argValue, command.FileOwner, command.StringNumber);
+                var valueErrors = FindHyphenErrors(argValue, command.FileOwner, command.StringNumber, command);
                 foreach (var error in valueErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -73,6 +75,8 @@ public class TestHyphenInsteadOfDash : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? argValue,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
@@ -86,7 +90,7 @@ public class TestHyphenInsteadOfDash : TestFunction
                 var paramValue = parameter?.Value ?? string.Empty;
                 
                 // Ищем ошибки в тексте параметра
-                var textErrors = FindHyphenErrors(paramText, command.FileOwner, command.StringNumber);
+                var textErrors = FindHyphenErrors(paramText, command.FileOwner, command.StringNumber, command);
                 foreach (var error in textErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -96,13 +100,15 @@ public class TestHyphenInsteadOfDash : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? paramText,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
                 }
                 
                 // Ищем ошибки в значении параметра
-                var valueErrors = FindHyphenErrors(paramValue, command.FileOwner, command.StringNumber);
+                var valueErrors = FindHyphenErrors(paramValue, command.FileOwner, command.StringNumber, command);
                 foreach (var error in valueErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -112,6 +118,8 @@ public class TestHyphenInsteadOfDash : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? paramValue,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
@@ -196,7 +204,7 @@ public class TestHyphenInsteadOfDash : TestFunction
             
             var textCommand = (TextCommand)command;
             var text = textCommand?.Text ?? string.Empty;
-            var errors = FindHyphenErrors(text, textCommand.FileOwner, textCommand.StringNumber);
+            var errors = FindHyphenErrors(text, textCommand.FileOwner, textCommand.StringNumber, textCommand);
             
             foreach (var error in errors)
             {
@@ -207,6 +215,8 @@ public class TestHyphenInsteadOfDash : TestFunction
                     error.LineNumber ?? textCommand.StringNumber,
                     error.ColumnNumber ?? 1,
                     error.OriginalText ?? text,
+                    error.EndLineNumber,
+                    error.EndColumnNumber,
                     suggestedFix: error.SuggestedFix,
                     errorCommand: textCommand
                 ));
@@ -215,62 +225,118 @@ public class TestHyphenInsteadOfDash : TestFunction
     }
 
     /// <summary>
-    /// Находит позиции неправильного использования дефиса вместо тире
+    /// Находит позиции неправильных дефисов в тексте
     /// </summary>
     /// <param name="text">Текст для анализа</param>
     /// <param name="fileName">Имя файла</param>
     /// <param name="baseLineNumber">Базовый номер строки</param>
+    /// <param name="command">Команда, содержащая информацию о позициях (опционально)</param>
     /// <returns>Список ошибок с диагностической информацией</returns>
-    private List<TestError> FindHyphenErrors(string text, string fileName, int baseLineNumber)
+    private List<TestError> FindHyphenErrors(string text, string fileName, int baseLineNumber, Command command = null)
     {
         var errors = new List<TestError>();
         
         if (string.IsNullOrEmpty(text))
             return errors;
 
-        var lines = text.Split('\n');
-        
-        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+        // Ищем дефисы в тексте
+        for (int charIndex = 0; charIndex < text.Length; charIndex++)
         {
-            var line = lines[lineIndex];
+            char currentChar = text[charIndex];
             
-            for (int charIndex = 0; charIndex < line.Length; charIndex++)
+            if (currentChar == _wrongHyphen)
             {
-                if (line[charIndex] != _wrongHyphen)
-                    continue;
+                // Вычисляем позицию в строке для проверки окружения пробелами
+                int lineNumber = 1;
+                int columnNumber = 1;
+                
+                // Подсчитываем строки и столбцы до текущей позиции
+                for (int i = 0; i < charIndex; i++)
+                {
+                    if (text[i] == '\n')
+                    {
+                        lineNumber++;
+                        columnNumber = 1;
+                    }
+                    else
+                    {
+                        columnNumber++;
+                    }
+                }
+                
+                // Получаем строку, в которой находится дефис
+                var lines = text.Split('\n');
+                var currentLine = lineNumber <= lines.Length ? lines[lineNumber - 1] : "";
                 
                 bool left = true;
                 bool right = true;
                 
                 // Проверяем, что слева и справа от символа есть пробелы (тире должно быть окружено пробелами)
-                if (charIndex - 1 >= 0)
-                    left = char.IsWhiteSpace(line[charIndex - 1]);
+                if (columnNumber - 2 >= 0 && columnNumber - 2 < currentLine.Length)
+                    left = char.IsWhiteSpace(currentLine[columnNumber - 2]);
                 
-                if (charIndex + 1 < line.Length)
-                    right = char.IsWhiteSpace(line[charIndex + 1]);
+                if (columnNumber < currentLine.Length)
+                    right = char.IsWhiteSpace(currentLine[columnNumber]);
                 
+                // Только если дефис окружен пробелами, он должен быть заменен на тире
                 if (left && right)
                 {
-                    // Создаем контекст ошибки
-                    var contextStart = Math.Max(0, charIndex - 10);
-                    var contextEnd = Math.Min(line.Length, charIndex + 10);
-                    var context = line.Substring(contextStart, contextEnd - contextStart);
+                    int finalLineNumber;
+                    int finalColumnNumber;
                     
-                    // Создаем предлагаемое исправление
-                    var suggestedFix = line.Replace(_wrongHyphen.ToString(), "---"); // Заменяем на тире LaTeX
+                    // Если у нас есть команда с позиционной информацией, используем её для финальных координат
+                    if (command != null && command.SourceStartLine > 0)
+                    {
+                        // Вычисляем относительную позицию внутри текста команды
+                        int relativeLineOffset = 0;
+                        int relativeColumnOffset = charIndex;
+                        
+                        // Подсчитываем количество переносов строк до текущей позиции
+                        for (int i = 0; i < charIndex; i++)
+                        {
+                            if (text[i] == '\n')
+                            {
+                                relativeLineOffset++;
+                                relativeColumnOffset = charIndex - i - 1;
+                            }
+                        }
+                        
+                        finalLineNumber = command.SourceStartLine + relativeLineOffset;
+                        finalColumnNumber = (relativeLineOffset == 0) 
+                            ? command.SourceStartColumn + relativeColumnOffset 
+                            : relativeColumnOffset + 1;
+                    }
+                    else
+                    {
+                        // Fallback: используем базовую позицию
+                        finalLineNumber = baseLineNumber + lineNumber - 1;
+                        finalColumnNumber = columnNumber;
+                    }
+
+                    // Создаем контекст ошибки (часть строки вокруг дефиса)
+                    // columnNumber - это 1-based относительная позиция в тексте команды
+                    var hyphenIndex = columnNumber - 1; // 0-based позиция дефиса в currentLine
+                    var contextStart = Math.Max(0, hyphenIndex - 5); // 5 символов слева
+                    var contextEnd = Math.Min(currentLine.Length, hyphenIndex + 6); // 5 символов справа + сам дефис
+                    var context = contextStart < currentLine.Length ? 
+                        currentLine.Substring(contextStart, contextEnd - contextStart) : 
+                        currentLine;
                     
+                    // Создаем предлагаемое исправление строки (заменяем дефис на тире LaTeX)
+                    var suggestedFix = currentLine.Replace(_wrongHyphen.ToString(), "---");
+
                     var error = new TestError
                     {
                         ErrorType = ErrorType.Warning,
                         FileName = fileName,
-                        LineNumber = baseLineNumber + lineIndex,
-                        ColumnNumber = charIndex + 1, // 1-based
-                        EndLineNumber = baseLineNumber + lineIndex,
-                        EndColumnNumber = charIndex + 2, // После символа
+                        LineNumber = finalLineNumber,
+                        ColumnNumber = finalColumnNumber,
+                        EndLineNumber = finalLineNumber,
+                        EndColumnNumber = finalColumnNumber + 1,
                         OriginalText = context,
                         SuggestedFix = suggestedFix
                     };
-                    error.ErrorInfo = $"Дефис '{_wrongHyphen}' должен быть заменен на тире в позиции {charIndex + 1}";
+                    
                     errors.Add(error);
                 }
             }

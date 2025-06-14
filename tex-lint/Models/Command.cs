@@ -30,6 +30,36 @@ public class Command
     public int EndSymbolNumber;
 
     /// <summary>
+    /// Позиция начала команды в исходном тексте файла (абсолютная позиция)
+    /// </summary>
+    public int SourceStartPosition;
+
+    /// <summary>
+    /// Позиция конца команды в исходном тексте файла (абсолютная позиция)
+    /// </summary>
+    public int SourceEndPosition;
+
+    /// <summary>
+    /// Номер строки начала команды в исходном файле (1-based)
+    /// </summary>
+    public int SourceStartLine;
+
+    /// <summary>
+    /// Номер столбца начала команды в исходном файле (1-based)
+    /// </summary>
+    public int SourceStartColumn;
+
+    /// <summary>
+    /// Номер строки конца команды в исходном файле (1-based)
+    /// </summary>
+    public int SourceEndLine;
+
+    /// <summary>
+    /// Номер столбца конца команды в исходном файле (1-based)
+    /// </summary>
+    public int SourceEndColumn;
+
+    /// <summary>
     /// Номер файла, в котором была найдена команда
     /// /// </summary>
     public int FileIndex;

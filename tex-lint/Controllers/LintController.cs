@@ -254,8 +254,8 @@ public class LintController : ControllerBase
                             type = e.ErrorType.ToString(),
                             info = e.ErrorInfo,
                             command = e.ErrorCommand?.ToString(),
-                            // Новые поля для диагностик VS Code
-                            fileName = e.FileName,
+                            // Заменяем временные пути на относительные пути в архиве
+                            fileName = ReplaceZipTemporaryPath(e.FileName, extractPath, resolvedStartFile),
                             lineNumber = e.LineNumber,
                             columnNumber = e.ColumnNumber,
                             endLineNumber = e.EndLineNumber,
@@ -384,6 +384,10 @@ public class LintController : ControllerBase
                 var testFunctionHandler = new TestFunctionClasses.TestFunctionHandler(_configurationService);
                 var results = testFunctionHandler.RunAllTests();
 
+                // Определяем путь файла для отображения в диагностике
+                var displayFilePath = request.FilePath ?? "document.tex";
+                var tempFileFullPath = Path.Combine(tempDir, fileName);
+
                 return Ok(new
                 {
                     commandsFound = commands.Count,
@@ -395,8 +399,8 @@ public class LintController : ControllerBase
                             type = e.ErrorType.ToString(),
                             info = e.ErrorInfo,
                             command = e.ErrorCommand?.ToString(),
-                            // Новые поля для диагностик VS Code
-                            fileName = e.FileName,
+                            // Заменяем временный путь на оригинальный путь пользователя
+                            fileName = ReplaceTemporaryPath(e.FileName, tempFileFullPath, displayFilePath),
                             lineNumber = e.LineNumber,
                             columnNumber = e.ColumnNumber,
                             endLineNumber = e.EndLineNumber,
@@ -436,6 +440,57 @@ public class LintController : ControllerBase
                 return StatusCode(500, new { error = "Внутренняя ошибка сервера" });
             }
         }
+    }
+
+    /// <summary>
+    /// Заменяет временный путь файла на оригинальный путь пользователя
+    /// </summary>
+    /// <param name="currentPath">Текущий путь (может быть временным)</param>
+    /// <param name="tempFilePath">Путь к временному файлу</param>
+    /// <param name="originalPath">Оригинальный путь пользователя</param>
+    /// <returns>Корректный путь для отображения</returns>
+    private string? ReplaceTemporaryPath(string? currentPath, string tempFilePath, string originalPath)
+    {
+        if (string.IsNullOrEmpty(currentPath))
+            return originalPath;
+
+        // Если путь совпадает с временным файлом, заменяем на оригинальный
+        if (currentPath == tempFilePath || 
+            Path.GetFileName(currentPath) == Path.GetFileName(tempFilePath))
+        {
+            return originalPath;
+        }
+
+        // Если путь содержит временную директорию, заменяем её на путь пользователя
+        var tempDir = Path.GetDirectoryName(tempFilePath);
+        if (!string.IsNullOrEmpty(tempDir) && currentPath.StartsWith(tempDir))
+        {
+            var relativePath = Path.GetRelativePath(tempDir, currentPath);
+            return Path.Combine(Path.GetDirectoryName(originalPath) ?? "", relativePath);
+        }
+
+        return currentPath;
+    }
+
+    /// <summary>
+    /// Заменяет временный путь файла на относительный путь в ZIP архиве
+    /// </summary>
+    /// <param name="currentPath">Текущий путь (может быть временным)</param>
+    /// <param name="extractPath">Путь к временной директории извлечения</param>
+    /// <param name="startFile">Стартовый файл</param>
+    /// <returns>Относительный путь для отображения</returns>
+    private string? ReplaceZipTemporaryPath(string? currentPath, string extractPath, string startFile)
+    {
+        if (string.IsNullOrEmpty(currentPath))
+            return startFile;
+
+        // Если путь находится в временной директории, создаем относительный путь
+        if (currentPath.StartsWith(extractPath))
+        {
+            return Path.GetRelativePath(extractPath, currentPath);
+        }
+
+        return currentPath;
     }
 
     /// <summary>

@@ -98,7 +98,7 @@ function getConfig(): ExtensionConfig {
     return {
         serverUrl: config.get('serverUrl', 'http://localhost:5000'),
         startFile: config.get('startFile', ''),
-        timeout: config.get('timeout', 30000),
+        timeout: config.get('timeout', 3000000),
         autoAnalyze: config.get('autoAnalyze', false),
         excludePatterns: config.get('excludePatterns', [
             '**/node_modules/**',
@@ -363,7 +363,9 @@ async function processAnalysisResult(result: LatexAnalysisResult, workspaceFolde
                     const line = Math.max(0, (error.lineNumber || 1) - 1); // VS Code использует 0-based индексы
                     const startCol = Math.max(0, (error.columnNumber || 1) - 1);
                     const endLine = error.endLineNumber ? Math.max(0, error.endLineNumber - 1) : line;
-                    const endCol = error.endColumnNumber ? Math.max(0, error.endColumnNumber - 1) : startCol + 10;
+                    const endCol = error.endColumnNumber ? Math.max(0, error.endColumnNumber - 1) : startCol + 5;
+                    console.log(line, startCol, endLine, endCol);
+                    console.log(error.fileName, error.lineNumber, error.columnNumber, error.endLineNumber, error.endColumnNumber);
                     
                     const range = new vscode.Range(line, startCol, endLine, endCol);
                     

@@ -20,5 +20,13 @@ public class EnvironmentCommand: Command
         GlobalIndex = current.GlobalIndex;
         Parameters = current.Parameters;
         Arguments = current.Arguments;
+        
+        // Копируем новые поля позиций
+        SourceStartPosition = current.SourceStartPosition;
+        SourceEndPosition = current.SourceEndPosition;
+        SourceStartLine = current.SourceStartLine;
+        SourceStartColumn = current.SourceStartColumn;
+        SourceEndLine = current.SourceEndLine;
+        SourceEndColumn = current.SourceEndColumn;
     }
 }

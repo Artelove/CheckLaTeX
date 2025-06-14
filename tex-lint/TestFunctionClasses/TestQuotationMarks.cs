@@ -44,7 +44,7 @@ public class TestQuotationMarks : TestFunction
                 var argValue = argument.Value ?? string.Empty;
                 
                 // Ищем ошибки в тексте аргумента
-                var textErrors = FindQuotationMarkErrors(argText, command.FileOwner, command.StringNumber);
+                var textErrors = FindQuotationMarkErrors(argText, command.FileOwner, command.StringNumber, command);
                 foreach (var error in textErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -54,13 +54,15 @@ public class TestQuotationMarks : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? argText,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
                 }
                 
                 // Ищем ошибки в значении аргумента
-                var valueErrors = FindQuotationMarkErrors(argValue, command.FileOwner, command.StringNumber);
+                var valueErrors = FindQuotationMarkErrors(argValue, command.FileOwner, command.StringNumber, command);
                 foreach (var error in valueErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -70,6 +72,8 @@ public class TestQuotationMarks : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? argValue,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
@@ -83,7 +87,7 @@ public class TestQuotationMarks : TestFunction
                 var paramValue = parameter.Value ?? string.Empty;
                 
                 // Ищем ошибки в тексте параметра
-                var textErrors = FindQuotationMarkErrors(paramText, command.FileOwner, command.StringNumber);
+                var textErrors = FindQuotationMarkErrors(paramText, command.FileOwner, command.StringNumber, command);
                 foreach (var error in textErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -93,13 +97,15 @@ public class TestQuotationMarks : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? paramText,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
                 }
                 
                 // Ищем ошибки в значении параметра
-                var valueErrors = FindQuotationMarkErrors(paramValue, command.FileOwner, command.StringNumber);
+                var valueErrors = FindQuotationMarkErrors(paramValue, command.FileOwner, command.StringNumber, command);
                 foreach (var error in valueErrors)
                 {
                     Errors.Add(TestError.CreateWithDiagnostics(
@@ -109,6 +115,8 @@ public class TestQuotationMarks : TestFunction
                         error.LineNumber ?? command.StringNumber,
                         error.ColumnNumber ?? 1,
                         error.OriginalText ?? paramValue,
+                        error.EndLineNumber,
+                        error.EndColumnNumber,
                         suggestedFix: error.SuggestedFix,
                         errorCommand: command
                     ));
@@ -135,7 +143,7 @@ public class TestQuotationMarks : TestFunction
         {
             var textCommand = (TextCommand)command;
             var text = textCommand?.Text ?? string.Empty;
-            var errors = FindQuotationMarkErrors(text, textCommand.FileOwner, textCommand.StringNumber);
+            var errors = FindQuotationMarkErrors(text, textCommand.FileOwner, textCommand.StringNumber, textCommand);
             
             foreach (var error in errors)
             {
@@ -146,6 +154,8 @@ public class TestQuotationMarks : TestFunction
                     error.LineNumber ?? textCommand.StringNumber,
                     error.ColumnNumber ?? 1,
                     error.OriginalText ?? text,
+                    error.EndLineNumber,
+                    error.EndColumnNumber,
                     suggestedFix: error.SuggestedFix,
                     errorCommand: textCommand
                 ));
@@ -159,58 +169,129 @@ public class TestQuotationMarks : TestFunction
     /// <param name="text">Текст для анализа</param>
     /// <param name="fileName">Имя файла</param>
     /// <param name="baseLineNumber">Базовый номер строки</param>
+    /// <param name="command">Команда, содержащая информацию о позициях (опционально)</param>
     /// <returns>Список ошибок с диагностической информацией</returns>
-    private List<TestError> FindQuotationMarkErrors(string text, string fileName, int baseLineNumber)
+    private List<TestError> FindQuotationMarkErrors(string text, string fileName, int baseLineNumber, Command command = null)
     {
         var errors = new List<TestError>();
         
         if (string.IsNullOrEmpty(text))
             return errors;
 
-        var lines = text.Split('\n');
-        
-        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+        // Ищем кавычки в тексте
+        for (int charIndex = 0; charIndex < text.Length; charIndex++)
         {
-            var line = lines[lineIndex];
+            char currentChar = text[charIndex];
             
-            for (int charIndex = 0; charIndex < line.Length; charIndex++)
+            foreach (var invalidQuote in _invalidQuotes)
             {
-                char currentChar = line[charIndex];
-                
-                foreach (var invalidQuote in _invalidQuotes)
+                if (currentChar == invalidQuote)
                 {
-                    if (currentChar == invalidQuote)
+                    int lineNumber;
+                    int columnNumber;
+                    
+                    // Если у нас есть команда с позиционной информацией, используем её
+                    if (command != null && command.SourceStartLine > 0)
                     {
-                        // Определяем предлагаемую замену
-                        string suggestedReplacement = invalidQuote switch
-                        {
-                            '"' => "<<>>", // Обычные двойные кавычки
-                            '\'' => "<<>>", // Обычные одинарные кавычки
-                            _ => "<<>>"
-                        };
-
-                        // Создаем контекст ошибки (слово или предложение вокруг кавычки)
-                        var contextStart = Math.Max(0, charIndex - 10);
-                        var contextEnd = Math.Min(line.Length, charIndex + 10);
-                        var context = line.Substring(contextStart, contextEnd - contextStart);
+                        // Вычисляем относительную позицию внутри текста команды
+                        int relativeLineOffset = 0;
+                        int relativeColumnOffset = charIndex;
                         
-                        // Создаем предлагаемое исправление всей строки
-                        var suggestedFix = line.Replace(invalidQuote.ToString(), suggestedReplacement);
-
-                        var error = new TestError
+                        // Подсчитываем количество переносов строк до текущей позиции
+                        for (int i = 0; i < charIndex; i++)
                         {
-                            ErrorType = ErrorType.Warning,
-                            FileName = fileName,
-                            LineNumber = baseLineNumber + lineIndex,
-                            ColumnNumber = charIndex + 1, // 1-based
-                            EndLineNumber = baseLineNumber + lineIndex,
-                            EndColumnNumber = charIndex + 2, // После символа
-                            OriginalText = context,
-                            SuggestedFix = suggestedFix
-                        };
-                        error.ErrorInfo = $"Неправильная кавычка '{invalidQuote}' в позиции {charIndex + 1}";
-                        errors.Add(error);
+                            if (text[i] == '\n')
+                            {
+                                relativeLineOffset++;
+                                relativeColumnOffset = charIndex - i - 1;
+                            }
+                        }
+                        
+                        lineNumber = command.SourceStartLine + relativeLineOffset;
+                        columnNumber = (relativeLineOffset == 0) 
+                            ? command.SourceStartColumn + relativeColumnOffset 
+                            : relativeColumnOffset + 1;
                     }
+                    else
+                    {
+                        // Fallback: вычисляем позицию в тексте
+                        lineNumber = baseLineNumber;
+                        columnNumber = 1;
+                        
+                        for (int i = 0; i < charIndex; i++)
+                        {
+                            if (text[i] == '\n')
+                            {
+                                lineNumber++;
+                                columnNumber = 1;
+                            }
+                            else
+                            {
+                                columnNumber++;
+                            }
+                        }
+                    }
+                    
+                    // Получаем строку для контекста
+                    var lines = text.Split('\n');
+                    var relativeLineIndex = 0;
+                    int currentPos = 0;
+                    
+                    // Находим в какой строке находится символ
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        if (currentPos + lines[i].Length >= charIndex)
+                        {
+                            relativeLineIndex = i;
+                            break;
+                        }
+                        currentPos += lines[i].Length + 1; // +1 для \n
+                    }
+                    
+                    var currentLine = relativeLineIndex < lines.Length ? lines[relativeLineIndex] : "";
+                    
+                    // Определяем предлагаемую замену
+                    string suggestedReplacement = invalidQuote switch
+                    {
+                        '"' => "<<>>", // Обычные двойные кавычки  
+                        '\'' => "<<>>", // Обычные одинарные кавычки
+                        _ => "<<>>",
+                    };
+
+                    // Создаем контекст ошибки (часть строки вокруг кавычки)
+                    // Определяем позицию кавычки в текущей строке для создания контекста
+                    var quotePositionInLine = 1;
+                    for (int pos = currentPos; pos < charIndex; pos++)
+                    {
+                        if (text[pos] != '\n')
+                        {
+                            quotePositionInLine++;
+                        }
+                    }
+                    
+                    var quoteIndex = quotePositionInLine - 1; // 0-based позиция кавычки в currentLine
+                    var contextStart = Math.Max(0, quoteIndex - 5); // 5 символов слева
+                    var contextEnd = Math.Min(currentLine.Length, quoteIndex + 6); // 5 символов справа + сама кавычка
+                    var context = contextStart < currentLine.Length ? 
+                        currentLine.Substring(contextStart, contextEnd - contextStart) : 
+                        currentLine;
+                    
+                    // Создаем предлагаемое исправление строки
+                    var suggestedFix = currentLine.Replace(invalidQuote.ToString(), suggestedReplacement);
+
+                    var error = new TestError
+                    {
+                        ErrorType = ErrorType.Warning,
+                        FileName = fileName,
+                        LineNumber = lineNumber,
+                        ColumnNumber = columnNumber,
+                        EndLineNumber = lineNumber,
+                        EndColumnNumber = columnNumber + 1,
+                        OriginalText = context,
+                        SuggestedFix = suggestedFix
+                    };
+                    
+                    errors.Add(error);
                 }
             }
         }

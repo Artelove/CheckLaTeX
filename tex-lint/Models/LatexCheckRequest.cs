@@ -11,6 +11,11 @@ public class LatexCheckRequest
     public string Content { get; set; } = string.Empty;
     
     /// <summary>
+    /// Путь к файлу на устройстве пользователя (для корректного отображения диагностики в VS Code)
+    /// </summary>
+    public string? FilePath { get; set; }
+    
+    /// <summary>
     /// Дополнительные параметры проверки (опционально)
     /// </summary>
     public Dictionary<string, string>? Options { get; set; }
