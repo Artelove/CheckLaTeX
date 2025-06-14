@@ -1,0 +1,6 @@
+{
+    "checklatex.autoAnalyze": true,
+    "checklatex.periodicCheck": true,
+    "checklatex.periodicCheckInterval": 900000,
+    "checklatex.autoAnalyzeDelay": 3000
+}

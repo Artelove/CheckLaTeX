@@ -168,8 +168,8 @@ class CommandHandler
         var text = new StreamReader(fileName).ReadToEnd();
         
         var foundCommands = new List<Command>();
-        var currentCommand = new Command();
-        var textCommand = new TextCommand();
+        var currentCommand = new Command(fileName);
+        var textCommand = new TextCommand(fileName);
         
         var readCommandSymbols = false;
         var ignoreWhileStringEnd = false;
@@ -225,12 +225,12 @@ class CommandHandler
                     foundCommands.Add(currentCommand);
                 }
 
-                currentCommand = new Command();
+                currentCommand = new Command(fileName);
                 readCommandSymbols = false;
             }
             else
             {
-                textCommand ??= new()
+                textCommand ??= new(fileName)
                 {
                     StartSymbolNumber = ch,
                     FileOwner = fileName,
@@ -311,8 +311,8 @@ class CommandHandler
             foundCommands.AddRange(TestUtilities.GetAllCommandsLikeParametersFromEnvironment(environmentCommand));
         }
         
-        var currentCommand = new Command();
-        var textCommand = new TextCommand();
+        var currentCommand = new Command(environmentCommand.FileOwner);
+        TextCommand textCommand = null;
         
         bool readCommandSymbols = false;
         bool ignoreWhileStringEnd = false; 
@@ -345,7 +345,7 @@ class CommandHandler
                 
                 if (environmentCommand.EnvironmentName == "comment" && currentCommand.Name != "end")
                 {
-                    currentCommand = new Command();
+                    currentCommand = new Command(environmentCommand.FileOwner);
                     readCommandSymbols = false;
                     continue;
                 }
@@ -384,12 +384,12 @@ class CommandHandler
                     }
                 }
 
-                currentCommand = new Command();
+                currentCommand = new Command(environmentCommand.FileOwner);
                 readCommandSymbols = false;
             }
             else
             {
-                textCommand ??= new ()
+                textCommand ??= new (environmentCommand.FileOwner)
                 {
                     StartSymbolNumber = ch,
                     FileOwner = environmentCommand.FileOwner,

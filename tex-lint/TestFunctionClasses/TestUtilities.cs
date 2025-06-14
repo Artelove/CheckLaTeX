@@ -92,10 +92,9 @@ public static class TestUtilities
         var foundsCommand = new List<Command>();
         foreach (var argument in environmentCommand.Parameters)
         {
-            foundsCommand.Add(new Command()
+            foundsCommand.Add(new Command(environmentCommand.FileOwner)
             {
                 StringNumber = environmentCommand.StringNumber,
-                FileOwner = environmentCommand.FileOwner,
                 Name = argument.Text,
                 Arguments = new()
                 {

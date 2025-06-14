@@ -1,4 +1,0 @@
-{
-  "content": "\\documentclass{article}\n\\begin{document}\n\nПроверка позиций - тире и \"кавычки\" здесь:\nСтрока с дефисом вместо тире.\nЕще одна строка с \"неправильными\" кавычками.\n\n\\end{document}",
-  "fileName": "test.tex"
-} 

@@ -45,6 +45,36 @@
         "title": "Clear Diagnostics",
         "category": "CheckLaTeX",
         "icon": "$(clear-all)"
+      },
+      {
+        "command": "checklatex.togglePeriodicCheck",
+        "title": "Toggle Periodic Check",
+        "category": "CheckLaTeX",
+        "icon": "$(clock)"
+      },
+      {
+        "command": "checklatex.toggleAutoAnalyze",
+        "title": "Toggle Auto Analyze on Save",
+        "category": "CheckLaTeX",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "checklatex.analyzeProjectFull",
+        "title": "Full Project Analysis",
+        "category": "CheckLaTeX",
+        "icon": "$(search-fuzzy)"
+      },
+      {
+        "command": "checklatex.configureAutoCheckInterval",
+        "title": "Configure Auto Check Interval",
+        "category": "CheckLaTeX",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "checklatex.setQuickInterval",
+        "title": "Set Quick Check Interval",
+        "category": "CheckLaTeX",
+        "icon": "$(clock)"
       }
     ],
     "menus": {
@@ -77,6 +107,26 @@
         {
           "command": "checklatex.analyzeCurrentFile",
           "when": "resourceExtname == .tex"
+        },
+        {
+          "command": "checklatex.togglePeriodicCheck",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "checklatex.toggleAutoAnalyze",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "checklatex.analyzeProjectFull",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "checklatex.configureAutoCheckInterval",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "checklatex.setQuickInterval",
+          "when": "workspaceFolderCount > 0"
         }
       ]
     },
@@ -103,6 +153,53 @@
           "default": false,
           "description": "Автоматически анализировать при сохранении .tex файлов"
         },
+        "checklatex.autoAnalyzeScope": {
+          "type": "string",
+          "enum": [
+            "current",
+            "project"
+          ],
+          "default": "project",
+          "description": "Область автоматического анализа при сохранении: current - только сохраненный файл, project - весь проект"
+        },
+        "checklatex.autoAnalyzeDelay": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Задержка перед автоматическим анализом после сохранения в миллисекундах"
+        },
+        "checklatex.autoAnalyzeShowNotification": {
+          "type": "boolean",
+          "default": true,
+          "description": "Показывать уведомления о результатах автоматического анализа"
+        },
+        "checklatex.periodicCheck": {
+          "type": "boolean",
+          "default": false,
+          "description": "Включить периодическую проверку LaTeX файлов"
+        },
+        "checklatex.periodicCheckInterval": {
+          "type": "number",
+          "default": 300000,
+          "minimum": 2000,
+          "maximum": 3600000,
+          "description": "Интервал периодической проверки в миллисекундах (от 30 секунд до 1 часа)"
+        },
+        "checklatex.periodicCheckScope": {
+          "type": "string",
+          "enum": [
+            "current",
+            "project"
+          ],
+          "default": "current",
+          "description": "Область периодической проверки: current - текущий файл, project - весь проект"
+        },
+        "checklatex.periodicCheckOnlyWhenActive": {
+          "type": "boolean",
+          "default": true,
+          "description": "Выполнять периодическую проверку только когда окно активно"
+        },
         "checklatex.excludePatterns": {
           "type": "array",
           "default": [
@@ -115,6 +212,18 @@
         }
       }
     },
+    "keybindings": [
+      {
+        "command": "checklatex.analyzeProjectFull",
+        "key": "ctrl+alt+shift+s",
+        "when": "workspaceFolderCount > 0"
+      },
+      {
+        "command": "checklatex.setQuickInterval",
+        "key": "ctrl+alt+shift+t",
+        "when": "workspaceFolderCount > 0"
+      }
+    ],
     "views": {
       "explorer": [
         {

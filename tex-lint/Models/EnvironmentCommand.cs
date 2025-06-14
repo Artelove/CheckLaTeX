@@ -11,9 +11,9 @@ public class EnvironmentCommand: Command
     public List<Command> InnerCommands { get; set; } = new();
 
     public EnvironmentCommand(Command current)
+        :base(current.FileOwner)
     {
         Name = current.Name;
-        FileOwner = current.FileOwner;
         StartSymbolNumber = current.StartSymbolNumber;
         StringNumber = current.StringNumber;
         EndSymbolNumber = current.EndSymbolNumber;

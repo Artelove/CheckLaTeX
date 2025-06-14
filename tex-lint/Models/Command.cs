@@ -79,6 +79,11 @@ public class Command
     /// /// </summary>
     public List<Parameter> Arguments = new();
 
+    public Command(string fileOwner)
+    {
+        FileOwner = fileOwner;
+    }
+
     /// <summary>
     /// Текстовый конструктор команды
     /// </summary>

@@ -6,7 +6,8 @@
         
         public const string TEXT_COMMAND_NAME = "TEXT_NAME";  
 
-        public TextCommand()
+        public TextCommand(string fileName)
+            :base(fileName)
         {
             Name = TEXT_COMMAND_NAME;
         }
