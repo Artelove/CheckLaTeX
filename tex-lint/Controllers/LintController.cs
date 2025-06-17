@@ -139,8 +139,9 @@ public class LintController : ControllerBase
                 return BadRequest("Поддерживаются только ZIP файлы");
             }
 
-            // Создаем временную директорию
-            var workingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "TEST");
+            // Создаем уникальную временную директорию с requestId
+            var requestId = Guid.NewGuid().ToString();
+            var workingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "temp", requestId);
             Directory.CreateDirectory(workingDirectory);
 
             try
@@ -214,9 +215,6 @@ public class LintController : ControllerBase
                 var handler = new CommandHandler(resolvedStartFile, extractPath, _configurationService);
                 var commands = handler.FindAllCommandsInDocument();
 
-                // Создаем уникальный ID для запроса
-                var requestId = Guid.NewGuid().ToString();
-                
                 // Настраиваем пути для тестовых функций через singleton
                 var testUtilities = TestUtilities.Instance;
                 testUtilities.SetStartDirectory(requestId, extractPath);

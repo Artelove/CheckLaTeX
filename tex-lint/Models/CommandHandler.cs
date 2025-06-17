@@ -98,7 +98,7 @@ class CommandHandler
     /// </returns>
     public List<Command> FindAllCommandsInDocument()
     {
-        var foundCommands = FindAllCommandsInFile(StartDirectory+"\\"+StartFile);
+        var foundCommands = FindAllCommandsInFile(Path.Combine(StartDirectory, StartFile));
         
         for (int i = 0; i < foundCommands.Count; i++)
         {
@@ -109,7 +109,7 @@ class CommandHandler
                 
                 foundCommands = InsertListAtIndex(
                     foundCommands,
-                    FindAllCommandsInFile(StartDirectory+"\\"+foundCommands[i].Arguments[0].Value),
+                    FindAllCommandsInFile(Path.Combine(StartDirectory, foundCommands[i].Arguments[0].Value)),
                     i,
                     false);
             }
