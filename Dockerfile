@@ -7,16 +7,16 @@ RUN apt-get update && apt-get install -y git
 # Создаем и устанавливаем рабочую директорию
 WORKDIR /app
 
-# Клонируем репозиторий при первоначальной сборке образа
-# Используем URL, который вы указали
-RUN git clone https://github.com/Artelove/CheckLaTeX.git .
+# Копируем все файлы из локального контекста сборки в контейнер.
+# Это включает и папку .git, что позволяет entrypoint.sh делать git pull.
+COPY . .
 
 # Копируем скрипт запуска в контейнер
-COPY entrypoint.sh .
-# Даем права на выполнение
 RUN chmod +x entrypoint.sh
 
 # Копируем конфигурационные файлы, чтобы они были в контексте сборки
+# Этот шаг теперь не обязателен, так как `COPY . .` уже все скопировал,
+# но оставим для ясности, что эти файлы важны.
 COPY lint-rules.json .
 COPY commands.json .
 COPY environments.json .
