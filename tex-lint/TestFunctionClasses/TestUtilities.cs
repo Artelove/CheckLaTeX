@@ -138,27 +138,34 @@ public sealed class TestUtilities
     /// </summary>
     public static string FindConfigFile(string fileName)
     {
-        // Поиск в различных локациях
-        var searchPaths = new[]
+        // 1. Самый надежный способ: ищем рядом с исполняемой сборкой.
+        // Это отлично работает в Docker, где все лежит в одной папке.
+        var assemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
+        var pathInAssemblyDir = Path.Combine(assemblyLocation, fileName);
+        if (File.Exists(pathInAssemblyDir))
         {
-            fileName, // Текущая директория
-            Path.Combine("..", fileName), // Родительская директория
-            Path.Combine("..", "..", fileName), // На два уровня выше
-            Path.Combine("..", "..", "..", fileName), // На три уровня выше (для bin/Debug/net6.0)
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName), // Директория приложения
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", fileName), // Корень проекта от bin
-        };
-        
-        foreach (var path in searchPaths)
+            return pathInAssemblyDir;
+        }
+
+        // 2. Fallback для локальной разработки (когда запуск идет из bin/Debug/...)
+        // Ищем, поднимаясь по дереву директорий от папки со сборкой.
+        var currentDir = new DirectoryInfo(assemblyLocation);
+        for (int i = 0; i < 5; i++) // Ищем на 5 уровней вверх, этого более чем достаточно
         {
-            if (File.Exists(path))
+            var pathInParentDir = Path.Combine(currentDir.FullName, fileName);
+            if (File.Exists(pathInParentDir))
             {
-                return path;
+                return pathInParentDir;
             }
+            if (currentDir.Parent == null)
+            {
+                break;
+            }
+            currentDir = currentDir.Parent;
         }
         
-        // Если не найден, возвращаем путь по умолчанию
-        return Path.Combine("..", "..", "..", fileName);
+        // 3. Если ничего не найдено, выбрасываем исключение, чтобы сразу видеть проблему.
+        throw new FileNotFoundException($"Не удалось найти критически важный конфигурационный файл: {fileName}");
     }
     
     public List<Command> GetAllCommandsByName(string requestId, string name)
