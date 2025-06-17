@@ -5,7 +5,7 @@
 ## Содержание
 1.  [Подготовка сервера и установка Docker](#шаг-1-подготовка-сервера-и-установка-docker)
 2.  [Получение исходного кода проекта](#шаг-2-получение-исходного-кода-проекта)
-3.  [Создание Dockerfile](#шаг-3-создание-dockerfile)
+3.  [Файлы конфигурации развертывания](#шаг-3-файлы-конфигурации-развертывания)
 4.  [Сборка и запуск Docker-контейнера](#шаг-4-сборка-и-запуск-docker-контейнера)
 5.  [Проверка и управление контейнером](#шаг-5-проверка-и-управление-контейнером)
 6.  [Сборка и установка расширения VS Code](#шаг-6-сборка-и-установка-расширения-vs-code)
@@ -58,7 +58,6 @@ sudo apt-get install -y git
 ```
 
 #### 2.2. Клонируйте репозиторий
-Замените `https://github.com/Artelove/CheckLaTeX.git` на реальный URL вашего репозитория.
 ```bash
 git clone https://github.com/Artelove/CheckLaTeX.git
 ```
@@ -69,68 +68,86 @@ git clone https://github.com/Artelove/CheckLaTeX.git
 cd CheckLaTeX
 ```
 
+> **Важно:** Файлы `Dockerfile` и `entrypoint.sh` уже есть в репозитории. Следующий шаг описывает их содержимое для справки. Вам не нужно создавать их вручную, если вы клонировали репозиторий.
+
 ---
 
-## Шаг 3: Создание Dockerfile
+## Шаг 3: Файлы конфигурации развертывания
 
-`Dockerfile` — это текстовый файл, который содержит инструкции для сборки образа вашего .NET-приложения.
+#### 3.1. `Dockerfile`
+`Dockerfile` — это текстовый файл, который содержит инструкции для сборки образа. Он настроен так, чтобы при сборке клонировать репозиторий.
 
-Выполните следующую команду, чтобы создать `Dockerfile` с необходимым содержимым в корне проекта:
+```dockerfile
+# Используем образ с полным .NET SDK, так как он нужен для сборки в рантайме
+FROM mcr.microsoft.com/dotnet/sdk:6.0
 
-```bash
-cat <<EOF > Dockerfile
-# Этап 1: Сборка приложения
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /source
+# Устанавливаем git
+RUN apt-get update && apt-get install -y git
 
-# Копируем .csproj и восстанавливаем зависимости
-# Это кэширует слои и ускоряет последующие сборки
-COPY tex-lint/*.csproj ./tex-lint/
-RUN dotnet restore ./tex-lint/tex-lint.csproj
+# Создаем и устанавливаем рабочую директорию
+WORKDIR /app
 
-# Копируем остальные файлы проекта
-COPY tex-lint/. ./tex-lint/
+# Клонируем репозиторий при первоначальной сборке образа
+# Используем URL, который вы указали
+RUN git clone https://github.com/Artelove/CheckLaTeX.git .
 
-# Копируем конфигурационные файлы, которые должны быть доступны при сборке и в рантайме
+# Копируем скрипт запуска в контейнер
+COPY entrypoint.sh .
+# Даем права на выполнение
+RUN chmod +x entrypoint.sh
+
+# Копируем конфигурационные файлы, чтобы они были в контексте сборки
 COPY lint-rules.json .
 COPY commands.json .
 COPY environments.json .
 
-# Публикуем приложение в режиме Release
-RUN dotnet publish ./tex-lint/tex-lint.csproj -c Release -o /app/publish
-
-# Этап 2: Создание финального, легковесного образа
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS final
-WORKDIR /app
-COPY --from=build /app/publish .
-
-# Копируем конфигурационные файлы в рабочую директорию приложения
-COPY --from=build /source/lint-rules.json .
-COPY --from=build /source/commands.json .
-COPY --from=build /source/environments.json .
-
-# Открываем порт, который слушает приложение
+# Открываем порт, который будет слушать приложение
 EXPOSE 80
-EXPOSE 443
 
-# Устанавливаем точку входа для запуска приложения
-ENTRYPOINT ["dotnet", "tex-lint.dll"]
-EOF
+# Устанавливаем наш скрипт как точку входа.
+# Он будет выполняться каждый раз при запуске контейнера.
+ENTRYPOINT ["./entrypoint.sh"]
 ```
-Эта команда автоматически создаст файл `Dockerfile` в текущей директории.
+
+#### 3.2. `entrypoint.sh`
+Это главный скрипт, который выполняется при каждом запуске контейнера. Он загружает последние изменения из репозитория, пересобирает и запускает приложение.
+
+```bash
+#!/bin/bash
+# Прерываем выполнение скрипта, если любая команда завершится с ошибкой
+set -e
+
+echo "--- Pulling latest changes from repository ---"
+# Получаем последние изменения из ветки main. git reset отменяет любые случайные локальные изменения.
+git fetch origin
+git reset --hard origin/main
+
+echo "--- Restoring dotnet dependencies ---"
+# Восстанавливаем зависимости для проекта
+dotnet restore ./tex-lint/tex-lint.csproj
+
+echo "--- Building and publishing application ---"
+# Публикуем приложение в папку /app/publish
+dotnet publish ./tex-lint/tex-lint.csproj -c Release -o /app/publish
+
+echo "--- Starting CheckLaTeX backend ---"
+# Переходим в папку с опубликованным приложением и запускаем его
+cd /app/publish
+exec dotnet tex-lint.dll
+```
 
 ---
 
 ## Шаг 4: Сборка и запуск Docker-контейнера
 
 #### 4.1. Соберите Docker-образ
-Эта команда прочитает `Dockerfile` и создаст образ с тегом `checklatex-backend`. Процесс может занять несколько минут.
+Эта команда прочитает `Dockerfile` и создаст образ с тегом `checklatex-backend`. Так как репозиторий клонируется во время сборки, этот шаг может занять некоторое время.
 ```bash
 sudo docker build -t checklatex-backend .
 ```
 
 #### 4.2. Запустите контейнер из созданного образа
-Эта команда запустит контейнер в фоновом режиме (`-d`), пробросит порт `80` контейнера на порт `5000` сервера и задаст имя `checklatex-server`.
+Эта команда запустит контейнер. При каждом запуске он будет автоматически подтягивать последнюю версию кода.
 ```bash
 sudo docker run -d -p 5000:80 --name checklatex-server checklatex-backend
 ```
