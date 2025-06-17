@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using TexLint.Models;
+using TexLint.Models.HandleInfos;
 
 namespace TexLint.TestFunctionClasses;
 
@@ -13,140 +15,180 @@ public class TestCiteToBibItems : TestFunction
     private readonly Regex _regexItemName = new(PATTERN_ITEM);
     private readonly Regex _regexKey = new(PATTERN_KEY);
     private readonly Regex _regexSpace = new(PATTERN_END_OF_STRING);
+    private readonly BibliographyRule _bibliographyConfig;
 
-    public TestCiteToBibItems()
+    public TestCiteToBibItems(ILatexConfigurationService configurationService, string requestId) 
+        : base(configurationService, requestId)
     {
-        //List<Command> cites = new();
-        var citeNumberCommand = new Dictionary<string,Command>();
-        var cites = TestUtilities.GetAllCommandsByName("cite");
+        // Загружаем конфигурацию из lint-rules.json
+        var lintRulesJson = File.ReadAllText(PathToLintRulesJson);
+        var lintRules = JsonSerializer.Deserialize<LintRules>(lintRulesJson);
+        _bibliographyConfig = lintRules?.Bibliography ?? new BibliographyRule();
+        
+        RunCheck();
+    }
+    
+    private void RunCheck()
+    {
+        var citeNumberCommand = new Dictionary<string, Command>();
+        var cites = GetAllCommandsByName("cite");
         var bibItems = ParseBibItems();
         
+        // Собираем все цитирования
         foreach (var command in cites)
         {
             foreach (var argument in command.Arguments)
             {
-                citeNumberCommand.TryAdd(argument.Text,command);
-            }
-        }
-
-        bool match;
-        foreach (var command in citeNumberCommand)
-        {
-            match = false;
-            for (int i = 0; i < bibItems.Count; i++)
-            {
-                if (command.Key == bibItems[i].Key) 
+                if (!string.IsNullOrEmpty(argument.Text))
                 {
-                    match = true;
-                    break;
+                    citeNumberCommand.TryAdd(argument.Text, command);
                 }
             }
-
-            if (match == false)
-            {
-                Errors.Add(new TestError()
-                {
-                    ErrorType = ErrorType.Error,
-                    ErrorCommand = command.Value,
-                    ErrorInfo = $"Команда \\cite[{command.Key}] не нашла ссылаемого источника."
-                });
-            }
         }
-        
-        foreach (var t in bibItems)
+
+        // Проверяем, что каждое цитирование имеет соответствующий библиографический источник
+        if (_bibliographyConfig.CheckMissingCitations)
         {
-            match = false;
-            foreach (var command in citeNumberCommand)
+            foreach (var citePair in citeNumberCommand)
             {
-                if (command.Key == t.Key) 
+                var citationKey = citePair.Key;
+                var citeCommand = citePair.Value;
+                var match = bibItems.Any(bibItem => bibItem.Key == citationKey);
+
+                if (!match)
                 {
-                    match = true;
-                    break;
+                    Errors.Add(TestError.CreateWithDiagnostics(
+                        ErrorType.Error,
+                        $"Команда \\cite[{citationKey}] не нашла ссылаемого источника",
+                        citeCommand.FileOwner ?? "unknown.tex",
+                        citeCommand.StringNumber,
+                        citeCommand.SourceStartColumn,
+                        citeCommand.ToString(),
+                        suggestedFix: $"Добавьте библиографический источник с ключом '{citationKey}' в .bib файл",
+                        errorCommand: citeCommand
+                    ));
                 }
             }
-
-            if (match == false)
+        }
+        
+        // Проверяем, что каждый библиографический источник используется
+        if (_bibliographyConfig.CheckUnusedSources)
+        {
+            foreach (var bibItem in bibItems)
             {
-                Errors.Add(new TestError()
+                var match = citeNumberCommand.ContainsKey(bibItem.Key);
+
+                if (!match)
                 {
-                    ErrorType = ErrorType.Error,
-                    ErrorInfo = $"Библиографический источник  Name:{t.Name} Key:{ t.Key} не нашел ожидаемую команду \\cite с ключем {t.Key}."
-                });
+                    // Создаем ошибку без привязки к конкретной команде, т.к. проблема в отсутствии использования
+                    Errors.Add(TestError.CreateWithDiagnostics(
+                        ErrorType.Warning,
+                        $"Библиографический источник '{bibItem.Name}' с ключом '{bibItem.Key}' не используется в документе",
+                        _bibliographyConfig.BibFilePath,
+                        bibItem.LineNumber,
+                        1,
+                        $"@{bibItem.Name}{{{bibItem.Key}",
+                        suggestedFix: $"Удалите неиспользуемый источник или добавьте \\cite{{{bibItem.Key}}} в текст"
+                    ));
+                }
             }
         }
-        
     }
-    
-    private List<BibItem> FilterNonGrowthItems()
-    {
-        var bibItems = ParseBibItems();
-        var indexesToDelete = new List<int> ();
-        
-        for (var i = 0; i < bibItems.Count; i++)
-        {
-            if (Int32.Parse(bibItems[i].Key) != i + 1)
-            {
-                indexesToDelete.Add(i);
-            }
-        }
 
-        for (var i = indexesToDelete.Count - 1; i >= 0; i--)
-        {
-            bibItems.RemoveAt(indexesToDelete[i]);
-        }
-        
-        return bibItems;
-    }
     
     private List<BibItem> ParseBibItems()
     {
-        //Указать в файле конфигурации .bib файл
         var bibItems = new List<BibItem>();
-        var text = new StreamReader(TestUtilities.StartDirectory+"\\"+"Bib.bib").ReadToEnd();
         
-        var readBibItem = false;
-        var readKey = false;
-        
-        var item = new BibItem();
-        
-        foreach (var t in text)
+        try
         {
-            if (_regexSpace.Match(t.ToString()).Success)
-                continue;
-            if (readKey)
+            var bibFilePath = Path.Combine(StartDirectory, _bibliographyConfig.BibFilePath);
+            if (!File.Exists(bibFilePath))
             {
-                if (_regexKey.Match(item.Key + t).Success)
+                //Попробовать найти другой файл в проекте с .bib
+                var bibFiles = Directory.GetFiles(StartDirectory, "*.bib");
+                if (bibFiles.Length > 0)
                 {
-                    item.Key += t;
-                    continue;
+                    bibFilePath = bibFiles[0];
                 }
                 else
-                {
-                    bibItems.Add(item);
-                    item = new BibItem();
-                    readBibItem = false;
-                    readKey = false;
-                    continue;
-                }
+                
+                return bibItems;
             }
+            
+            var lines = File.ReadAllLines(bibFilePath);
+            var readBibItem = false;
+            var readKey = false;
+            var item = new BibItem();
+            
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                var line = lines[lineIndex];
+                
+                foreach (var t in line)
+                {
+                    if (_regexSpace.Match(t.ToString()).Success)
+                        continue;
+                        
+                    if (readKey)
+                    {
+                        if (_regexKey.Match(item.Key + t).Success)
+                        {
+                            item.Key += t;
+                            continue;
+                        }
+                        else
+                        {
+                            // Устанавливаем номер строки (1-based)
+                            item.LineNumber = lineIndex + 1;
+                            bibItems.Add(item);
+                            item = new BibItem();
+                            readBibItem = false;
+                            readKey = false;
+                            continue;
+                        }
+                    }
 
-            if (readBibItem)
-            {
-                if (_regexItemName.Match(item.Name + t).Success)
-                    item.Name += t;
-                else
-                {
-                    readKey = true;
-                    readBibItem = false;
+                    if (readBibItem)
+                    {
+                        if (_regexItemName.Match(item.Name + t).Success)
+                            item.Name += t;
+                        else
+                        {
+                            readKey = true;
+                            readBibItem = false;
+                        }
+                    }
+                    else
+                    {
+                        if (t == '@')
+                        {
+                            readBibItem = true;
+                            // Запоминаем начальную строку для текущего элемента
+                            item.LineNumber = lineIndex + 1;
+                        }
+                    }
                 }
             }
-            else
+            
+            // Добавляем последний элемент, если он остался необработанным
+            if (!string.IsNullOrEmpty(item.Name) || !string.IsNullOrEmpty(item.Key))
             {
-                if (t == '@')
-                {
-                    readBibItem = true;
-                }
+                bibItems.Add(item);
             }
+        }
+        catch (Exception ex)
+        {
+            // Если произошла ошибка при чтении файла, добавляем ошибку в список
+            Errors.Add(TestError.CreateWithDiagnostics(
+                ErrorType.Error,
+                $"Не удалось прочитать файл библиографии: {ex.Message}",
+                _bibliographyConfig.BibFilePath,
+                1,
+                1,
+                "",
+                suggestedFix: "Проверьте существование и доступность .bib файла"
+            ));
         }
 
         return bibItems;
@@ -157,4 +199,5 @@ class BibItem
 {
     public string Name = string.Empty;
     public string Key = string.Empty;
+    public int LineNumber = 1;
 }

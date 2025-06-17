@@ -307,8 +307,8 @@ class CommandHandler
         if (environmentCommand.EnvironmentName == "lstlisting")
         {
             environmentCommand.InnerCommands.AddRange(
-                TestUtilities.GetAllCommandsLikeParametersFromEnvironment(environmentCommand));
-            foundCommands.AddRange(TestUtilities.GetAllCommandsLikeParametersFromEnvironment(environmentCommand));
+                TestUtilities.GetAllCommandsLikeParametersFromEnvironmentStatic(environmentCommand));
+            foundCommands.AddRange(TestUtilities.GetAllCommandsLikeParametersFromEnvironmentStatic(environmentCommand));
         }
         
         var currentCommand = new Command(environmentCommand.FileOwner);

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using TexLint.Models;
 
 namespace TexLint.Models;
@@ -8,7 +9,23 @@ public class EnvironmentCommand: Command
 
     public Command EndCommand { get; set; }
 
+    private List<Command> _innerCommands = new();
+
     public List<Command> InnerCommands { get; set; } = new();
+
+    public List<Command> GetDeepInnerCommands()
+    {
+        var commands = new List<Command>();
+        commands.AddRange(InnerCommands);
+        foreach (var command in InnerCommands)
+        {
+            if(command is EnvironmentCommand environmentCommand)
+            {
+                commands.AddRange(environmentCommand.GetDeepInnerCommands());
+            }
+        }
+        return commands;
+    }
 
     public EnvironmentCommand(Command current)
         :base(current.FileOwner)

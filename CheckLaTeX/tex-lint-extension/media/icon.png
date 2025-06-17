@@ -1,0 +1,8 @@
+# This is a placeholder for the PNG icon
+# In a real scenario, you would convert the SVG to PNG using tools like:
+# - Inkscape: inkscape icon.svg --export-png=icon.png --export-width=128 --export-height=128
+# - Online converters
+# - Node.js tools like sharp or svg2png
+
+# For now, you should manually convert the icon.svg to icon.png
+# The PNG should be 128x128 pixels for VS Code extensions 

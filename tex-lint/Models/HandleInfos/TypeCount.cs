@@ -2,8 +2,8 @@
 {
     public struct TypeCount
     {
-        private const string PHRASE_TYPE = "phrase";
-        private const string VALUE_TYPE = "value";
+        public const string PHRASE_TYPE = "phrase";
+        public const string VALUE_TYPE = "value";
         
         public string Type
         {

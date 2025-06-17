@@ -9,13 +9,11 @@ namespace TexLint.TestFunctionClasses;
 public class TestHyphenInsteadOfDash : TestFunction
 {
     private readonly char _wrongHyphen;
-    private readonly ILatexConfigurationService _configurationService;
 
-    public TestHyphenInsteadOfDash(ILatexConfigurationService configurationService)
+    public TestHyphenInsteadOfDash(ILatexConfigurationService configurationService, string requestId) 
+        : base(configurationService, requestId)
     {
-        _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
-        
-        var rulesJson = File.ReadAllText(TestUtilities.FindConfigFile("lint-rules.json"));
+        var rulesJson = File.ReadAllText(PathToLintRulesJson);
         var rules = JsonSerializer.Deserialize<LintRules>(rulesJson);
         
         _wrongHyphen = string.IsNullOrEmpty(rules?.Hyphen.WrongSymbol) ? '-' : rules.Hyphen.WrongSymbol[0];
@@ -32,7 +30,7 @@ public class TestHyphenInsteadOfDash : TestFunction
 
         var commandsWherePhraseArgOrParam = new List<Command>();
         
-        foreach (var command in TestUtilities.FoundsCommandsWithLstlisting)
+        foreach (var command in FoundsCommandsWithLstlisting)
         {
             if (commandsNamesWherePhraseArgOrParam.Contains(command.Name))
                 commandsWherePhraseArgOrParam.Add(command);
@@ -127,9 +125,9 @@ public class TestHyphenInsteadOfDash : TestFunction
             }
         }
         
-        var textCommands = TestUtilities.GetAllCommandsByName(TextCommand.TEXT_COMMAND_NAME);
+        var textCommands = GetAllCommandsByName(TextCommand.TEXT_COMMAND_NAME);
         
-        foreach (var environmentCommand in TestUtilities.GetAllEnvironment())
+        foreach (var environmentCommand in GetAllEnvironment())
         {
             if (environmentCommand.EnvironmentName == "lstlisting")
             {
@@ -144,7 +142,7 @@ public class TestHyphenInsteadOfDash : TestFunction
         }
 
         var ignoreEnvironments = new List<EnvironmentCommand> ();
-        foreach (var environment in TestUtilities.GetAllEnvironment())
+        foreach (var environment in GetAllEnvironment())
         {
             if(environment.EnvironmentName == "equation" ||
                environment.EnvironmentName == "comment")

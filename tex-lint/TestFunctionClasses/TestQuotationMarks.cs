@@ -7,13 +7,11 @@ namespace TexLint.TestFunctionClasses;
 public class TestQuotationMarks : TestFunction
 {
     private readonly char[] _invalidQuotes;
-    private readonly ILatexConfigurationService _configurationService;
 
-    public TestQuotationMarks(ILatexConfigurationService configurationService)
+    public TestQuotationMarks(ILatexConfigurationService configurationService, string requestId) 
+        : base(configurationService, requestId)
     {
-        _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
-        
-        var lintRulesJson = File.ReadAllText(TestUtilities.FindConfigFile("lint-rules.json"));
+        var lintRulesJson = File.ReadAllText(PathToLintRulesJson);
         var lintRules = JsonSerializer.Deserialize<LintRules>(lintRulesJson);
 
         _invalidQuotes = lintRules?.QuotationMarks.Forbidden.Select(s => s[0]).ToArray() ?? Array.Empty<char>();
@@ -29,7 +27,7 @@ public class TestQuotationMarks : TestFunction
         }
 
         var commandsWherePhraseArgOrParam = new List<Command>();
-        foreach (var command in TestUtilities.FoundsCommandsWithLstlisting)
+        foreach (var command in FoundsCommandsWithLstlisting)
         {
             if (commandsNamesWherePhraseArgOrParam.Contains(command.Name))
                 commandsWherePhraseArgOrParam.Add(command);
@@ -124,8 +122,8 @@ public class TestQuotationMarks : TestFunction
             }
         }  
         
-        var textCommands = TestUtilities.GetAllCommandsByName("TEXT_NAME");
-        foreach (var environmentCommand in TestUtilities.GetAllEnvironment())
+        var textCommands = GetAllCommandsByName("TEXT_NAME");
+        foreach (var environmentCommand in GetAllEnvironment())
         {
             if (environmentCommand.EnvironmentName != "lstlisting")
                 continue;

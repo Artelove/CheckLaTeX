@@ -1,4 +1,5 @@
 ﻿using TexLint.Models;
+using TexLint.Models.HandleInfos;
 
 namespace TexLint.TestFunctionClasses;
 
@@ -10,9 +11,10 @@ public class TestCaptionNextToRef: TestFunction
     // * Листинг \ref{1}.
     // * Листинг \ref{1}.
     // * ( листинг \ref{1} ).
-    public TestCaptionNextToRef()
+    public TestCaptionNextToRef(ILatexConfigurationService configurationService, string requestId)
+        : base(configurationService, requestId)
     {
-        var refs = TestUtilities.GetAllCommandsByName("ref");
+        var refs = GetAllCommandsByName("ref");
         var textBefore = new Dictionary<Command, string>();
         var textAfter = new Dictionary<Command, string>();
         
@@ -25,7 +27,7 @@ public class TestCaptionNextToRef: TestFunction
             
             for (var i = _ref.GlobalIndex - 1; i >= 0; i--)
             {
-                if (TestUtilities.FoundsCommands[i] is TextCommand textCommand)
+                if (FoundsCommands[i] is TextCommand textCommand)
                 {
                     if (first != string.Empty)
                     {
@@ -41,9 +43,9 @@ public class TestCaptionNextToRef: TestFunction
             first = string.Empty;
             second = string.Empty;
             
-            for (var i =_ref.GlobalIndex; i < TestUtilities.FoundsCommands.Count; i++)
+            for (var i =_ref.GlobalIndex; i < FoundsCommands.Count; i++)
             {
-                if (TestUtilities.FoundsCommands[i] is TextCommand textCommand)
+                if (FoundsCommands[i] is TextCommand textCommand)
                 {
                     if (first != string.Empty)
                     {
