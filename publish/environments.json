@@ -1,0 +1,34 @@
+{
+  "environments": [
+    {
+      "name": "enumerate",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "order": [
+        "p"
+      ]
+    },
+    {
+      "name": "figure",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "order": [
+        "p"
+      ]
+    },
+    {
+      "name": "lstlisting",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "order": [
+        "p"
+      ]
+    }
+  ]
+}

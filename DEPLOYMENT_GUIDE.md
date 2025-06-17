@@ -1,4 +1,277 @@
-# Руководство по развертыванию CheckLaTeX на Unix-сервере
+# Руководство по развертыванию CheckLaTeX
+
+## Вариант 1: Прямое развертывание на сервере (Рекомендуется)
+
+### Требования к серверу
+- Ubuntu/Debian Linux (или другой Unix-совместимый сервер)
+- .NET 6.0 Runtime
+- Минимум 512 MB RAM
+- 1 GB свободного места на диске
+
+### Шаг 1: Установка .NET 6.0 Runtime на сервере
+
+#### Для Ubuntu 20.04/22.04:
+```bash
+# Обновляем систему
+sudo apt update
+
+# Устанавливаем .NET 6.0 Runtime
+wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+
+sudo apt update
+sudo apt install -y aspnetcore-runtime-6.0
+```
+
+#### Для Debian 11:
+```bash
+# Обновляем систему
+sudo apt update
+
+# Устанавливаем .NET 6.0 Runtime
+wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+
+sudo apt update
+sudo apt install -y aspnetcore-runtime-6.0
+```
+
+#### Для CentOS/RHEL 8:
+```bash
+# Добавляем Microsoft repository
+sudo rpm -Uvh https://packages.microsoft.com/config/centos/8/packages-microsoft-prod.rpm
+
+# Устанавливаем .NET 6.0 Runtime
+sudo dnf install -y aspnetcore-runtime-6.0
+```
+
+### Шаг 2: Подготовка приложения на локальной машине
+
+#### Сборка приложения:
+```bash
+# В папке проекта
+cd tex-lint
+
+# Публикуем приложение для Linux
+dotnet publish -c Release -r linux-x64 --self-contained false -o ../publish
+
+# Возвращаемся в корневую папку
+cd ..
+
+# Копируем конфигурационные файлы в папку публикации
+cp lint-rules.json publish/
+cp commands.json publish/
+cp environments.json publish/
+```
+
+### Шаг 3: Загрузка на сервер
+
+#### Создание архива:
+```bash
+# Создаем архив для передачи на сервер
+tar -czf checklatex-app.tar.gz publish/
+```
+
+#### Передача на сервер (выберите один способ):
+
+**Через SCP:**
+```bash
+scp checklatex-app.tar.gz user@your-server:/home/user/
+```
+
+**Через rsync:**
+```bash
+rsync -avz checklatex-app.tar.gz user@your-server:/home/user/
+```
+
+**Через FTP/SFTP:** используйте ваш любимый FTP клиент
+
+### Шаг 4: Развертывание на сервере
+
+```bash
+# Подключаемся к серверу
+ssh user@your-server
+
+# Создаем папку для приложения
+sudo mkdir -p /opt/checklatex
+cd /home/user
+
+# Распаковываем архив
+tar -xzf checklatex-app.tar.gz
+
+# Перемещаем файлы в системную папку
+sudo mv publish/* /opt/checklatex/
+sudo chown -R www-data:www-data /opt/checklatex
+sudo chmod +x /opt/checklatex/tex-lint
+
+# Делаем исполняемым
+sudo chmod +x /opt/checklatex/tex-lint
+```
+
+### Шаг 5: Создание systemd сервиса
+
+```bash
+# Создаем файл сервиса
+sudo nano /etc/systemd/system/checklatex.service
+```
+
+Содержимое файла `/etc/systemd/system/checklatex.service`:
+```ini
+[Unit]
+Description=CheckLaTeX Web API Service
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/checklatex
+ExecStart=/usr/bin/dotnet /opt/checklatex/tex-lint.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=checklatex
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://+:5000
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Шаг 6: Запуск сервиса
+
+```bash
+# Перезагружаем systemd
+sudo systemctl daemon-reload
+
+# Включаем автозапуск
+sudo systemctl enable checklatex
+
+# Запускаем сервис
+sudo systemctl start checklatex
+
+# Проверяем статус
+sudo systemctl status checklatex
+```
+
+### Шаг 7: Настройка firewall (если нужно)
+
+```bash
+# Открываем порт 5000
+sudo ufw allow 5000/tcp
+
+# Или через iptables
+sudo iptables -A INPUT -p tcp --dport 5000 -j ACCEPT
+```
+
+### Шаг 8: Проверка работы
+
+```bash
+# Проверяем, что сервис слушает порт
+sudo netstat -tlnp | grep :5000
+
+# Проверяем API
+curl http://localhost:5000/swagger
+
+# Или с другой машины
+curl http://your-server-ip:5000/swagger
+```
+
+### Управление сервисом
+
+```bash
+# Остановка сервиса
+sudo systemctl stop checklatex
+
+# Запуск сервиса
+sudo systemctl start checklatex
+
+# Перезапуск сервиса
+sudo systemctl restart checklatex
+
+# Просмотр логов
+sudo journalctl -u checklatex -f
+
+# Просмотр логов за последний час
+sudo journalctl -u checklatex --since "1 hour ago"
+```
+
+### Обновление приложения
+
+```bash
+# Останавливаем сервис
+sudo systemctl stop checklatex
+
+# Создаем backup
+sudo cp -r /opt/checklatex /opt/checklatex.backup.$(date +%Y%m%d_%H%M%S)
+
+# Загружаем новую версию (повторяем шаги 2-4)
+# Затем перезапускаем
+sudo systemctl start checklatex
+```
+
+### Мониторинг и отладка
+
+#### Просмотр логов в реальном времени:
+```bash
+sudo journalctl -u checklatex -f
+```
+
+#### Проверка использования ресурсов:
+```bash
+sudo systemctl status checklatex
+htop  # для мониторинга CPU/RAM
+```
+
+#### Проверка конфигурационных файлов:
+```bash
+ls -la /opt/checklatex/*.json
+```
+
+### Настройка через reverse proxy (опционально)
+
+Если вы хотите использовать стандартный порт 80/443, можете настроить nginx:
+
+```bash
+# Устанавливаем nginx
+sudo apt install nginx
+
+# Создаем конфигурацию
+sudo nano /etc/nginx/sites-available/checklatex
+```
+
+Содержимое файла nginx:
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;  # замените на ваш домен или IP
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection keep-alive;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+```bash
+# Активируем конфигурацию
+sudo ln -s /etc/nginx/sites-available/checklatex /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+---
+
+## Вариант 2: Развертывание через Docker (альтернативный способ)
 
 Это руководство предназначено для разработчиков и системных администраторов и описывает полный процесс развертывания backend-сервиса CheckLaTeX с нуля на сервере под управлением Unix-подобной операционной системы (например, Ubuntu/Debian).
 

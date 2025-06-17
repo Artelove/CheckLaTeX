@@ -1,0 +1,280 @@
+{
+  "commands": [
+    {
+      "name": "section",
+      "param": {
+        "type": "phrase",
+        "count": "?"
+      },
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "subsection",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "chapter",
+      "param": {
+        "type": "phrase",
+        "count": "?"
+      },
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "chapter*",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "cite",
+      "param": {
+        "type": "phrase",
+        "count": "?"
+      },
+      "arg": {
+        "type": "value",
+        "count": "1+"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "item",
+      "arg": {
+        "type": "phrase",
+        "count": "0+"
+      },
+      "param": {
+        "type": "phrase",
+        "count": "0+"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "verb",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "any"
+      ]
+    },
+    {
+      "name": "includegraphics",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "center"
+    },
+    {
+      "name": "textwidth",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "guillemotleft"
+    },
+    {
+      "name": "guillemotright"
+    },
+    {
+      "name": "TeX"
+    },
+    {
+      "name": "LaTeX"
+    },
+    {
+      "name": null
+    },
+    {
+      "name": "caption",
+      "param": {
+        "type": "phrase",
+        "count": "?"
+      },
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "label",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "end",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "ref",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "documentclass",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "usepackage",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "arg": {
+        "type": "value",
+        "count": "1+"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "lstset",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "arg": {
+        "type": "value",
+        "count": "1+"
+      },
+      "order": [
+        "p",
+        "a"
+      ]
+    },
+    {
+      "name": "printbibliography",
+      "param": {
+        "type": "value",
+        "count": "0+"
+      },
+      "order": [
+        "p"
+      ]
+    },
+    {
+      "name": "input",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "include",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "addbibresource",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    },
+    {
+      "name": "tableofcontents"
+    },
+    {
+      "name": "graphicspath",
+      "arg": {
+        "type": "phrase",
+        "count": "1"
+      },
+      "order": [
+        "a"
+      ]
+    }
+  ]
+}
