@@ -2,12 +2,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /source
 
-# Настраиваем прокси для всех сетевых операций
-ENV HTTP_PROXY="http://PcxPZeDU:5tzKskAH@142.111.228.124:63396"
-ENV HTTPS_PROXY="http://PcxPZeDU:5tzKskAH@142.111.228.124:63396"
-ENV http_proxy="http://PcxPZeDU:5tzKskAH@142.111.228.124:63396"
-ENV https_proxy="http://PcxPZeDU:5tzKskAH@142.111.228.124:63396"
-
 # Настраиваем переменные окружения для работы в условиях ограниченного доступа
 ENV DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER=0
 ENV NUGET_XMLDOC_MODE=skip
