@@ -15,6 +15,12 @@ echo "--- Building and publishing application ---"
 # Публикуем приложение в папку /app/publish
 dotnet publish ./tex-lint/tex-lint.csproj -c Release -o /app/publish
 
+echo "--- Copying configuration files to publish directory ---"
+# Эти файлы критически важны для работы приложения в рантайме
+cp lint-rules.json /app/publish/
+cp commands.json /app/publish/
+cp environments.json /app/publish/
+
 echo "--- Starting CheckLaTeX backend ---"
 # Переходим в папку с опубликованным приложением и запускаем его
 cd /app/publish
