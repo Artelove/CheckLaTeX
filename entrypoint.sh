@@ -1,11 +1,17 @@
 #!/bin/bash
-# Прерываем выполнение скрипта, если любая команда завершится с ошибкой
+# Прерываем выполнение скрипта, если любая команда завершится с ошибкой (кроме тех, что в if)
 set -e
 
-echo "--- Pulling latest changes from repository ---"
-# Получаем последние изменения из ветки main. git reset отменяет любые случайные локальные изменения.
-git fetch origin
-git reset --hard origin/main
+echo "--- Attempting to pull latest changes from repository ---"
+
+# Пытаемся обновиться, но не падаем, если не получится (например, нет сети).
+if git fetch origin; then
+    echo "Fetch successful. Resetting to origin/main."
+    git reset --hard origin/main
+else
+    # Если команда git fetch завершилась с ошибкой, выводим предупреждение и продолжаем.
+    echo "WARNING: Could not fetch from origin. Continuing with the local version of the code."
+fi
 
 echo "--- Restoring dotnet dependencies ---"
 # Восстанавливаем зависимости для проекта
