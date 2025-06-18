@@ -4,17 +4,22 @@
 
 ## Быстрая установка (автоматический скрипт)
 
-Для автоматической установки выполните одну команду:
+### Прямая установка из репозитория
+
+Когда скрипты будут загружены в основной репозиторий:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Artelove/CheckLaTeX/main/install.sh | sudo bash
 ```
 
-Или скачайте и запустите скрипт вручную:
+### Локальная установка (сейчас)
+
+Пока скрипты не в репозитории, скачайте их локально:
 
 ```bash
-wget https://raw.githubusercontent.com/Artelove/CheckLaTeX/main/install.sh
-chmod +x install.sh
+# Скачайте файлы install.sh и uninstall.sh в вашу директорию
+# Затем выполните:
+chmod +x install.sh uninstall.sh
 sudo ./install.sh
 ```
 

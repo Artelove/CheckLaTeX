@@ -51,14 +51,31 @@ print_status "Удаление временных файлов..."
 rm -rf /tmp/checklatex-*
 
 # Перезагружаем systemd
+print_status "Перезагрузка systemd..."
 systemctl daemon-reload
 
 # Удаляем правила firewall (опционально)
-read -p "Удалить правила firewall для порта 5000? (y/N): " -n 1 -r
-echo
+echo ""
+echo -n "Удалить правила firewall для порта 5000? (y/N): "
+read -r REPLY
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     ufw delete allow 5000/tcp 2>/dev/null || true
     print_status "Правила firewall удалены"
+else
+    print_status "Правила firewall оставлены без изменений"
 fi
 
-print_success "CheckLaTeX полностью удален из системы" 
+echo ""
+print_success "CheckLaTeX полностью удален из системы"
+
+# Показываем что удалили
+echo ""
+print_status "Удаленные компоненты:"
+echo "  ✓ SystemD сервис checklatex"
+echo "  ✓ Пользователь и группа checklatex" 
+echo "  ✓ Файлы приложения в /opt/checklatex"
+echo "  ✓ Временные файлы"
+
+echo ""
+print_status "Для повторной установки выполните:"
+echo "  curl -fsSL https://raw.githubusercontent.com/Artelove/CheckLaTeX/main/install.sh | sudo bash" 
