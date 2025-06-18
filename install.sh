@@ -136,7 +136,7 @@ After=network.target
 Wants=network.target
 
 [Service]
-Type=notify
+Type=simple
 User=checklatex
 Group=checklatex
 WorkingDirectory=/opt/checklatex/app
@@ -147,6 +147,7 @@ Restart=always
 RestartSec=10
 KillSignal=SIGINT
 TimeoutStopSec=30
+TimeoutStartSec=60
 
 # Environment variables
 Environment=ASPNETCORE_ENVIRONMENT=Production
