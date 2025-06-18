@@ -135,7 +135,7 @@
       "properties": {
         "checklatex.serverUrl": {
           "type": "string",
-          "default": "http://localhost:5000",
+          "default": "http://89.104.65.148:5000",
           "description": "URL сервера CheckLaTeX"
         },
         "checklatex.startFile": {
