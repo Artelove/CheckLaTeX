@@ -6,8 +6,7 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Явно указываем Kestrel слушать порт 80. Это решает проблемы с Docker.
-builder.WebHost.UseUrls("http://*:80");
+builder.WebHost.UseUrls("http://*:5000");
 
 // Add services to the container.
 builder.Services.AddControllers();
