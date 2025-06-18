@@ -4,6 +4,14 @@
 
 ## Быстрая установка (автоматический скрипт)
 
+### Полная переустановка
+
+```bash
+# Автоматическая переустановка
+curl -fsSL https://raw.githubusercontent.com/Artelove/CheckLaTeX/main/uninstall.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/Artelove/CheckLaTeX/main/install.sh | sudo bash
+```
+
 ### Прямая установка из репозитория
 
 Когда скрипты будут загружены в основной репозиторий:
@@ -657,14 +665,6 @@ sudo journalctl -u checklatex --no-pager | grep -i error
    ```
 
 5. **Ошибки компиляции**: Это предупреждения nullable reference types, не влияют на работу
-
-### Полная переустановка
-
-```bash
-# Автоматическая переустановка
-curl -fsSL https://raw.githubusercontent.com/Artelove/CheckLaTeX/main/uninstall.sh | sudo bash
-curl -fsSL https://raw.githubusercontent.com/Artelove/CheckLaTeX/main/install.sh | sudo bash
-```
 
 ## Безопасность
 

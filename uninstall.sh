@@ -49,6 +49,14 @@ rm -rf /opt/checklatex
 # Удаляем временные файлы
 print_status "Удаление временных файлов..."
 rm -rf /tmp/checklatex-*
+# Удаляем клонированный репозиторий если есть
+if [ -d "/tmp/CheckLaTeX" ]; then
+    rm -rf /tmp/CheckLaTeX
+fi
+
+if [ -d "CheckLaTeX" ]; then
+    rm -rf CheckLaTeX
+fi
 
 # Перезагружаем systemd
 print_status "Перезагрузка systemd..."
