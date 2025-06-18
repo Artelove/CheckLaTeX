@@ -105,6 +105,7 @@ mkdir -p /opt/checklatex/{app,logs,temp,backups}
 # Клонирование и сборка приложения
 print_status "Загрузка и сборка приложения..."
 cd /tmp
+rm -rf CheckLaTeX checklatex-*
 git clone https://github.com/Artelove/CheckLaTeX.git
 cd CheckLaTeX/tex-lint
 
@@ -240,6 +241,7 @@ systemctl stop checklatex
 # Клонируем последнюю версию
 echo "Downloading latest version..."
 rm -rf $TEMP_DIR
+cd /tmp && rm -rf CheckLaTeX checklatex-*
 git clone $REPO_URL $TEMP_DIR
 
 # Собираем новую версию
