@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 using TexLint.Models;
 using TexLint.Models.HandleInfos;
 
@@ -162,6 +163,115 @@ public class TestQuotationMarks : TestFunction
     }
 
     /// <summary>
+    /// Определяет, находится ли символ в математическом контексте LaTeX
+    /// </summary>
+    /// <param name="text">Полный текст</param>
+    /// <param name="position">Позиция символа в тексте</param>
+    /// <returns>True, если символ находится в математическом контексте</returns>
+    private bool IsInMathContext(string text, int position)
+    {
+        if (string.IsNullOrEmpty(text) || position < 0 || position >= text.Length)
+            return false;
+
+        // Проверяем inline math: $...$
+        var dollarMath = FindMathRanges(text, @"\$", @"\$");
+        if (dollarMath.Any(range => position >= range.Start && position <= range.End))
+            return true;
+
+        // Проверяем display math: \[...\]
+        var displayMath = FindMathRanges(text, @"\\\[", @"\\\]");
+        if (displayMath.Any(range => position >= range.Start && position <= range.End))
+            return true;
+
+        // Проверяем inline math: \(...\)
+        var parenMath = FindMathRanges(text, @"\\\(", @"\\\)");
+        if (parenMath.Any(range => position >= range.Start && position <= range.End))
+            return true;
+
+        // Проверяем math environments
+        var mathEnvironments = new[] { "equation", "align", "gather", "multline", "flalign", "alignat", "eqnarray" };
+        foreach (var env in mathEnvironments)
+        {
+            var envRanges = FindMathRanges(text, $@"\\begin\{{{env}\*?\}}", $@"\\end\{{{env}\*?\}}");
+            if (envRanges.Any(range => position >= range.Start && position <= range.End))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Находит диапазоны математических выражений в тексте
+    /// </summary>
+    /// <param name="text">Текст для анализа</param>
+    /// <param name="startPattern">Регулярное выражение для начала</param>
+    /// <param name="endPattern">Регулярное выражение для конца</param>
+    /// <returns>Список диапазонов математических выражений</returns>
+    private List<(int Start, int End)> FindMathRanges(string text, string startPattern, string endPattern)
+    {
+        var ranges = new List<(int Start, int End)>();
+        
+        try
+        {
+            var startMatches = Regex.Matches(text, startPattern);
+            var endMatches = Regex.Matches(text, endPattern);
+
+            int endIndex = 0;
+            foreach (Match startMatch in startMatches)
+            {
+                // Находим соответствующий закрывающий тег
+                while (endIndex < endMatches.Count && endMatches[endIndex].Index <= startMatch.Index)
+                {
+                    endIndex++;
+                }
+
+                if (endIndex < endMatches.Count)
+                {
+                    ranges.Add((startMatch.Index, endMatches[endIndex].Index + endMatches[endIndex].Length - 1));
+                    endIndex++;
+                }
+            }
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            // В случае timeout возвращаем пустой список
+            return new List<(int Start, int End)>();
+        }
+
+        return ranges;
+    }
+
+    /// <summary>
+    /// Проверяет, является ли символ математическим штрихом (прайм)
+    /// </summary>
+    /// <param name="text">Текст</param>
+    /// <param name="position">Позиция символа</param>
+    /// <param name="quote">Символ кавычки</param>
+    /// <returns>True, если это математический штрих</returns>
+    private bool IsMathematicalPrime(string text, int position, char quote)
+    {
+        // Апострофы (') и двойные апострофы ('') в математическом контексте являются штрихами
+        if (quote != '\'' && quote != '"')
+            return false;
+
+        if (!IsInMathContext(text, position))
+            return false;
+
+        // Дополнительная проверка: штрихи обычно идут после переменных/символов
+        // Проверяем, что перед апострофом есть буква, цифра или закрывающая скобка
+        if (position > 0)
+        {
+            char prevChar = text[position - 1];
+            if (char.IsLetterOrDigit(prevChar) || prevChar == ')' || prevChar == '}' || prevChar == ']')
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Находит позиции неправильных кавычек в тексте
     /// </summary>
     /// <param name="text">Текст для анализа</param>
@@ -185,6 +295,12 @@ public class TestQuotationMarks : TestFunction
             {
                 if (currentChar == invalidQuote)
                 {
+                    // Проверяем, не является ли это математическим штрихом
+                    if (IsMathematicalPrime(text, charIndex, invalidQuote))
+                    {
+                        continue; // Пропускаем математические штрихи
+                    }
+
                     int lineNumber;
                     int columnNumber;
                     
@@ -251,9 +367,10 @@ public class TestQuotationMarks : TestFunction
                     // Определяем предлагаемую замену
                     string suggestedReplacement = invalidQuote switch
                     {
-                        '"' => "<<>>", // Обычные двойные кавычки  
-                        '\'' => "<<>>", // Обычные одинарные кавычки
-                        _ => "<<>>",
+                        '"' => "«»", // Обычные двойные кавычки  
+                        '\'' => "«»", // Обычные одинарные кавычки
+                        '`' => "«»", // Обратные кавычки
+                        _ => "«»",
                     };
 
                     // Создаем контекст ошибки (часть строки вокруг кавычки)
